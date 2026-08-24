@@ -275,8 +275,10 @@ a.btn{border-bottom:1px solid transparent}
    it held). 41vw keeps the box at roughly that same aspect ratio at any
    width; the 2200px ceiling only matters past ~5850px viewports, wider than
    any real monitor, so in practice this doesn't plateau like the old cap
-   did (960px, which was already too short by 2560px wide). */
-.approach__figure{position:relative;min-height:clamp(520px,41vw,2200px);overflow:hidden}
+   did (960px, which was already too short by 2560px wide). min() with
+   88vh keeps a lid on short-but-wide windows, where 41vw alone could
+   otherwise ask for more height than the screen actually has. */
+.approach__figure{position:relative;min-height:clamp(520px,min(41vw,88vh),2200px);overflow:hidden}
 .approach__figure picture{display:contents}
 /* As the viewport widens, this column's height grows more slowly than its
    width (the text column wraps to fewer lines, capping the row's height),
@@ -653,13 +655,24 @@ a.btn{border-bottom:1px solid transparent}
   .hero__stats .eyebrow{margin-top:0}
   .stats__group{margin-top:18px;margin-bottom:0}
   .stats__row{flex:none;justify-content:flex-start;padding:0}
-  .stats__row+.stats__row{padding-top:22px}
+  .stats__row+.stats__row{margin-top:11px;padding-top:11px}
   /* Stacked: no free space for the auto margins to share, so space explicitly. */
   .hero__identity{margin:44px 0 0}
   .hero__cta{margin:44px 0 0}
   .approach{grid-template-columns:1fr}
   .approach__text{padding:72px var(--pad-x)}
-  .approach__figure{min-height:360px}
+  /* Stacked here (grid-template-columns:1fr above), so the figure jumps
+     from ~half the viewport wide to nearly full width, while this fixed
+     360px height didn't move with it — at 900px wide that's a 2.5:1 box,
+     cropping out the "Camp Cove" sign the same way the old flat desktop
+     floor did before it was scaled by width. Scaling purely by width
+     (122vw) fixed the crop but overshot on short screens — at 1080px
+     wide that's 1317px tall, taller than most laptop viewports, so the
+     photo alone could exceed the screen. min() with 88vh caps it to the
+     viewport's own height so it always fits on screen; the crop only
+     goes back to being tight on very short-and-wide windows, which is
+     the rarer case. */
+  .approach__figure{min-height:clamp(360px,min(122vw,88vh),1400px)}
   .industries__grid{grid-template-columns:repeat(2,1fr)}
   .industries__cell{border-right:1px solid var(--border-inverse);
     border-bottom:1px solid var(--border-inverse)}
