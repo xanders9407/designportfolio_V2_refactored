@@ -1,0 +1,83 @@
+# robots.txt — https://www.xanderstegehuis.co/
+# Everything on this site is open to every crawler, including AI/LLM
+# crawlers. The wildcard group below already permits all of them; the
+# named groups that follow exist only to state that intent explicitly,
+# because a named group overrides the wildcard for that agent.
+
+User-agent: *
+Allow: /
+
+# --- Search engines -------------------------------------------------
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# --- AI / LLM crawlers and assistants --------------------------------
+# OpenAI
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# Google AI (Gemini / Vertex grounding)
+User-agent: Google-Extended
+Allow: /
+
+# Apple Intelligence
+User-agent: Applebot-Extended
+Allow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# Meta
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+# Common Crawl (a training-data source for many models)
+User-agent: CCBot
+Allow: /
+
+# Others
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+Sitemap: https://www.xanderstegehuis.co/sitemap.xml
