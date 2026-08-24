@@ -1,0 +1,68 @@
+:root{
+  /* --- Ink: the navy from the logo lockup. Foundation of the brand. --- */
+  --ink-1000:#0B141B;
+  --ink-900:#101C25;
+  --ink-800:#192730;  /* sampled from xs-logo-dark.jpg background — the canonical navy */
+  --ink-700:#243642;
+  --ink-600:#37505E;
+  --ink-500:#4F6B7A;
+  --ink-400:#7A939F;
+  --ink-300:#A8BAC3;
+  --ink-200:#CEDAE0;
+  --ink-100:#E5ECEF;
+  --ink-050:#F1F5F7;
+
+  /* --- Teal: the letterform colour. Primary, interactive, brand. --- */
+  --teal-900:#1E4E58;
+  --teal-800:#2A6874;
+  --teal-700:#3D8B99;  /* AA text on white */
+  --teal-600:#4FA9B8;
+  --teal-500:#66C4D0;  /* sampled from xs-logo-light.jpg — the canonical teal */
+  --teal-400:#8FDFE0;  /* sampled from xs-logo-dark.jpg — teal on navy */
+  --teal-300:#B4EAEB;
+  --teal-200:#D6F4F4;
+  --teal-100:#EBFAFA;
+
+  /* --- Coral: the single playful accent. Sparingly: one per view. --- */
+  --coral-700:#C4552A;
+  --coral-600:#DE6537;
+  --coral-500:#ED7843;  /* from the source deck's callout colour */
+  --coral-300:#F7B694;
+  --coral-100:#FDEBE1;
+
+  /* --- Sand & brass: the warmth the moodboard asks for. Calm and luxury live here. --- */
+  --sand-050:#FBF8F4;  /* warm paper — the calm alternative to --paper-100 */
+  --sand-100:#F4EFE7;
+  --sand-200:#E8DFD1;
+  --sand-400:#C4AC8A;
+  --brass-700:#7C5F31;
+  --brass-500:#B08A4F;  /* luxury: hairline rules, small marks, never a fill */
+  --brass-100:#F2E7D3;
+
+  /* --- Paper: surfaces --- */
+  --paper-000:#FFFFFF;
+  --paper-050:#FBFCFD;
+  --paper-100:#F5F8F9;
+
+  /* --- Financial semantics. Never rely on hue alone: pair with +/− and a label. --- */
+  --gain-700:#1C6B4D;
+  --gain-500:#2E9B70;
+  --gain-100:#E4F4ED;
+  --loss-700:#9E3232;
+  --loss-500:#C94B4B;
+  --loss-100:#FBE9E9;
+  --warn-700:#8A6318;
+  --warn-500:#C89B2E;
+  --warn-100:#FCF3DD;
+  --info-700:var(--teal-700);
+  --info-500:var(--teal-500);
+  --info-100:var(--teal-100);
+
+  /* --- Data series: for charts. Ordered; use in sequence. --- */
+  --series-1:#66C4D0;
+  --series-2:#243642;
+  --series-3:#ED7843;
+  --series-4:#4FA9B8;
+  --series-5:#7A939F;
+  --series-6:#C89B2E;
+}

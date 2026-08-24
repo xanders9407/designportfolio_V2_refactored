@@ -1,0 +1,92 @@
+/* Semantic aliases. Author UI against THESE, not the raw ramps. */
+:root{
+  --text-strong:var(--ink-900);
+  --text-body:var(--ink-700);
+  --text-muted:var(--ink-500);
+  --text-subtle:var(--ink-400);
+  --text-inverse:var(--paper-000);
+  --text-inverse-muted:var(--ink-300);
+  --text-brand:var(--teal-700);
+  --text-link:var(--teal-700);
+  --text-link-hover:var(--teal-900);
+  --text-gain:var(--gain-700);
+  --text-loss:var(--loss-700);
+
+  --surface-page:var(--paper-100);
+  --surface-card:var(--paper-000);
+  --surface-raised:var(--paper-000);
+  --surface-sunken:var(--ink-050);
+  --surface-inverse:var(--ink-800);
+  --surface-inverse-deep:var(--ink-1000);
+  --surface-warm:var(--sand-050);
+  --surface-warm-deep:var(--sand-100);
+  --border-warm:var(--sand-200);
+  --text-luxe:var(--brass-700);
+  --rule-luxe:var(--brass-500);
+  --surface-brand-soft:var(--teal-100);
+  --surface-accent-soft:var(--coral-100);
+  --surface-chrome:var(--glass-light);
+
+  --border-subtle:var(--ink-100);
+  --border-default:var(--ink-200);
+  --border-strong:var(--ink-300);
+  --border-brand:var(--teal-500);
+  --border-inverse:rgba(255,255,255,.14);
+
+  --action-primary-bg:var(--ink-800);
+  --action-primary-bg-hover:var(--ink-900);
+  --action-primary-bg-active:var(--ink-1000);
+  --action-primary-fg:var(--paper-000);
+  --action-brand-bg:var(--teal-500);
+  --action-brand-bg-hover:var(--teal-600);
+  --action-brand-bg-active:var(--teal-700);
+  --action-brand-fg:var(--ink-900);
+  --action-secondary-bg:var(--paper-000);
+  --action-secondary-fg:var(--ink-800);
+  --action-ghost-fg:var(--ink-700);
+  --action-ghost-bg-hover:var(--ink-050);
+  --action-danger-bg:var(--loss-500);
+  --action-disabled-bg:var(--ink-100);
+  --action-disabled-fg:var(--ink-400);
+
+  --field-bg:var(--paper-000);
+  --field-border:var(--ink-200);
+  --field-border-hover:var(--ink-300);
+  --field-border-focus:var(--teal-500);
+  --field-placeholder:var(--ink-400);
+}
+/* Dark scope — apply to a section, a slide, or the whole app shell. */
+.xs-dark{
+  --text-strong:var(--paper-000);
+  --text-body:var(--ink-200);
+  --text-muted:var(--ink-300);
+  --text-subtle:var(--ink-400);
+  --text-inverse:var(--ink-900);
+  --text-brand:var(--teal-400);
+  --text-link:var(--teal-400);
+  --text-link-hover:var(--teal-300);
+  --surface-page:var(--ink-900);
+  --surface-card:var(--ink-800);
+  --surface-raised:var(--ink-700);
+  --surface-sunken:var(--ink-1000);
+  --surface-warm:var(--ink-900);
+  --surface-warm-deep:var(--ink-1000);
+  --border-warm:rgba(176,138,79,.32);
+  --text-luxe:var(--sand-400);
+  --rule-luxe:var(--brass-500);
+  --surface-brand-soft:rgba(102,196,208,.14);
+  --surface-chrome:var(--glass-dark);
+  --border-subtle:rgba(255,255,255,.10);
+  --border-default:rgba(255,255,255,.16);
+  --border-strong:rgba(255,255,255,.28);
+  --action-primary-bg:var(--paper-000);
+  --action-primary-fg:var(--ink-900);
+  --action-primary-bg-hover:var(--ink-100);
+  --action-secondary-bg:transparent;
+  --action-secondary-fg:var(--paper-000);
+  --action-ghost-fg:var(--ink-200);
+  --action-ghost-bg-hover:rgba(255,255,255,.08);
+  --field-bg:rgba(255,255,255,.05);
+  --field-border:rgba(255,255,255,.18);
+  --ring-focus:var(--ring-focus-dark);
+}

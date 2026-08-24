@@ -1,0 +1,26 @@
+:root{
+  /* 4px base. --space-1 through --space-24 = 4..96px. */
+  --space-0:0px;
+  --space-1:4px;
+  --space-2:8px;
+  --space-3:12px;
+  --space-4:16px;
+  --space-5:20px;
+  --space-6:24px;
+  --space-8:32px;
+  --space-10:40px;
+  --space-12:48px;
+  --space-16:64px;
+  --space-20:80px;
+  --space-24:96px;
+  --space-32:128px;
+  --space-40:160px;
+
+  /* Layout. The site is FULL-BLEED: sections span 100vw, only the text column is capped. */
+  --gutter:clamp(20px,5vw,80px); /* @kind spacing */
+  --measure-prose:68ch; /* @kind other */
+  --measure-wide:1440px;
+  --section-y:clamp(64px,9vw,160px); /* @kind spacing */
+  --sidebar-w:264px;
+  --topbar-h:64px;
+}

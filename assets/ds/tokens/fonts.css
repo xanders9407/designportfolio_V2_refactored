@@ -1,0 +1,10 @@
+/* Self-hosted from the source deck's embedded binaries. Cardo = display/serif, Inter = UI/body. */
+@font-face{font-family:"Cardo";src:url("../assets/fonts/Cardo-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Cardo";src:url("../assets/fonts/Cardo-Italic.ttf") format("truetype");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"Cardo";src:url("../assets/fonts/Cardo-Bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:"Inter";src:url("../assets/fonts/InterLight-Regular.ttf") format("truetype");font-weight:300;font-style:normal;font-display:swap}
+@font-face{font-family:"Inter";src:url("../assets/fonts/Inter-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Inter";src:url("../assets/fonts/Inter-Italic.ttf") format("truetype");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"Inter";src:url("../assets/fonts/Inter-Bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:swap}
+/* Inter ships 300/400/700 only. 500/600 are synthesised by the browser — do not author
+   at 500/600; step to 700 instead, or use letter-spacing for emphasis. */

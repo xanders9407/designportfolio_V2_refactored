@@ -1,0 +1,16 @@
+/* Minimal element defaults. No resets beyond what the brand actually needs. */
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font-family:var(--font-ui);font-weight:var(--weight-light);font-size:var(--text-md);line-height:var(--leading-relaxed);color:var(--text-body);background:var(--surface-page);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:var(--weight-regular);color:var(--text-strong);letter-spacing:var(--tracking-display);line-height:var(--leading-snug);margin:0}
+h1{font-size:var(--text-5xl);line-height:var(--leading-tight)}
+h2{font-size:var(--text-3xl)}
+h3{font-size:var(--text-xl)}
+h4{font-family:var(--font-ui);font-weight:var(--weight-bold);font-size:var(--text-sm);letter-spacing:var(--tracking-wide)}
+p{margin:0;max-width:var(--measure-prose);text-wrap:pretty}
+a{color:var(--text-link);text-decoration:none;border-bottom:1px solid color-mix(in oklab,var(--text-link) 34%,transparent);transition:color var(--duration-fast) var(--ease-standard),border-color var(--duration-fast) var(--ease-standard)}
+a:hover{color:var(--text-link-hover);border-bottom-color:var(--text-link-hover)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:none;box-shadow:var(--ring-focus);border-radius:var(--radius-xs)}
+/* Every number in a financial view is tabular. Non-negotiable. */
+.xs-num,td.xs-num,.xs-tabular{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+/* The uppercase eyebrow label — the system's signature small-type treatment. */
+.xs-eyebrow{font-family:var(--font-ui);font-weight:var(--weight-bold);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--text-muted)}

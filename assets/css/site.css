@@ -1,0 +1,804 @@
+@import url("../ds/styles.css");
+
+/* ==========================================================================
+   xanderstegehuis.co
+   Every value below resolves to a Stegehuis Design System token.
+   ========================================================================== */
+
+:root{
+  /* The design's working width. Backgrounds stay full-bleed at any viewport;
+     only the CONTENT column is capped here, so a wide monitor gets navy/sand
+     running edge to edge with the composition held at the width it was
+     designed at — rather than either stretching or floating in white bars.
+
+     --bleed is the space either side of that column, 0 until the viewport
+     exceeds it. Any padding that was X at 1440 becomes calc(bleed + X), which
+     leaves every value below this line behaving exactly as before on
+     1440-and-under screens. */
+  /* Measured off bcg.com: text bands run viewport-minus-gutters until they
+     reach a 1760px cap, then the side margins grow instead — while the TYPE
+     keeps scaling, which is what stops a wide screen feeling shrunken. */
+  --content-max:1760px;
+  --bleed:max(0px,calc((100vw - var(--content-max))/2));
+  --vw:min(100vw,var(--content-max));
+  /* Overrides the DS token (also vw-based) with the same capped formula.
+     Floor is the 22px mobile gutter of brief §13.1. */
+  --gutter:clamp(22px,calc(var(--vw)*.05),80px);
+  --pad-x:max(var(--gutter),var(--bleed));
+  /* The hero is full-bleed rather than capped, so its text keeps a much
+     smaller inset than the capped bands — this is the left-hand empty space,
+     and it stays modest (120px at 2400 vs 400px under the old cap). */
+  --hero-pad-x:clamp(22px,5vw,200px);
+  /* Fluid type ramp above the design width. --grow0 is 0px at and below
+     1440px, so every size built on it is identical to today's there and
+     below. --grow is the signed form, for sizes that also ramp DOWN under
+     1440 and so must not be floored at zero.
+     The ramp is gated on BOTH axes: type grows with width, but the vertical
+     room it has to live in is bounded by height, so on a short-and-wide screen
+     (2560x900) the width term alone would collapse the hero's gaps to zero.
+     min() lets whichever axis is tighter govern. */
+  --grow:min(calc(100vw - 1440px),calc((100vh - 800px)*2.5));
+  --grow0:max(0px,var(--grow));
+  /* Floor is the 40px mobile band padding of brief §13.1. */
+  --band-y:clamp(40px,calc(var(--vw)*.088),104px);
+  /* Governs both the outer top/bottom breathing room of the hero content AND,
+     via the sand panel's own margin, how much shorter that panel sits inside
+     its row — turning this up trades middle-of-hero gap for edge gap and a
+     lower "By the numbers" shape in one move. */
+  --hero-inset:clamp(40px,calc(84px + var(--grow0)*.0375),130px);
+  --duration-flip:560ms; /* card flip; the DS ramp stops at --duration-reveal */
+}
+@media (prefers-reduced-motion:reduce){:root{--duration-flip:0ms}}
+
+body{background:var(--paper-000)}
+
+/* Full width — the cap lives on each band's content, not on the page, so
+   backgrounds always reach the viewport edge. position:relative anchors
+   Contact's floating menu (its only ancestor without its own
+   .hero/.masthead relative context). */
+/* overflow-x:clip (not hidden — clip creates no scroll container) keeps the
+   Publications sand-bleed pseudo-element from adding a few px of sideways
+   scroll at very wide viewports, where 100vw counts the scrollbar. */
+.page{position:relative;overflow-x:clip}
+
+img{display:block;max-width:100%}
+
+.skip-link{position:absolute;left:-9999px;top:0;z-index:99;padding:var(--space-3) var(--space-5);
+  background:var(--paper-000);color:var(--ink-900);border-radius:var(--radius-md);
+  box-shadow:var(--shadow-lg);font:var(--weight-bold) var(--text-sm)/1 var(--font-ui)}
+.skip-link:focus{left:var(--space-4);top:var(--space-4)}
+
+/* --- Signature small type ------------------------------------------------ */
+
+.eyebrow{font-family:var(--font-ui);font-weight:var(--weight-bold);font-size:var(--text-2xs);
+  letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--brass-700)}
+.eyebrow--onDark{color:var(--sand-400)}
+.eyebrow--brass{color:var(--brass-500)}
+
+.chapter-mark{display:flex;align-items:baseline;gap:var(--space-5)}
+.chapter-mark__num{font:var(--weight-regular) 15px var(--font-display);color:var(--brass-500)}
+
+.rule-brass{width:28px;height:1px;background:var(--brass-500);border:0;margin:14px 0 0}
+
+/* --- Button (ported from the DS Button component, same tokens) ----------- */
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-3);
+  height:48px;padding:0 var(--space-6);font-family:var(--font-ui);font-weight:var(--weight-bold);
+  font-size:var(--text-md);letter-spacing:var(--tracking-tight);line-height:1;white-space:nowrap;
+  border:1px solid transparent;border-radius:var(--radius-md);cursor:pointer;
+  transition:var(--transition-control)}
+.btn:active{transform:scale(.972)}
+.btn--brand{background:var(--action-brand-bg);color:var(--action-brand-fg)}
+.btn--brand:hover{background:var(--action-brand-bg-hover);color:var(--action-brand-fg)}
+a.btn{border-bottom:1px solid transparent}
+
+/* --- Menu ---------------------------------------------------------------- */
+
+.menu{position:relative}
+.menu--floating{position:absolute;top:22px;left:var(--pad-x);z-index:20}
+/* Home's hero is full-bleed, so its menu follows the smaller hero inset
+   rather than the capped bands' padding. Contact stays on the standard
+   --pad-x inset (matching About/Portfolio/Publications) rather than
+   inheriting that — its quote is aligned to the same value below. */
+.hero .menu--floating{left:var(--hero-pad-x)}
+
+.menu__button{display:flex;align-items:center;gap:var(--space-3);padding:9px var(--space-4);
+  background:rgba(255,255,255,.06);-webkit-backdrop-filter:var(--blur-chrome);
+  backdrop-filter:var(--blur-chrome);border:1px solid var(--border-inverse);
+  border-radius:var(--radius-pill);cursor:pointer;color:var(--paper-000);
+  font-family:var(--font-ui);font-weight:var(--weight-bold);font-size:var(--text-2xs);
+  letter-spacing:.08em;text-transform:uppercase;transition:var(--transition-control)}
+.menu__button:hover{background:rgba(255,255,255,.12)}
+
+.menu__bars{display:flex;flex-direction:column;gap:3px}
+.menu__bars span{display:block;width:14px;height:1px;background:currentColor}
+
+.menu__panel{position:absolute;top:calc(100% + 10px);left:0;z-index:9;min-width:220px;
+  padding:var(--space-2) 0;background:var(--paper-000);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-lg);list-style:none;margin:0}
+.menu__panel[hidden]{display:none}
+.menu__panel a{display:block;padding:11px var(--space-5);border-bottom:0;
+  font-family:var(--font-ui);font-weight:var(--weight-regular);font-size:var(--text-xs);
+  color:var(--ink-700);transition:background-color var(--duration-fast) var(--ease-standard)}
+.menu__panel a:hover{background:var(--ink-050);color:var(--ink-700)}
+.menu__panel a[aria-current="page"]{font-weight:var(--weight-bold);color:var(--ink-900)}
+
+/* --- Hero ---------------------------------------------------------------- */
+
+/* The hero fills the whole first screen — no strip of the next section visible
+   on load. The grid keeps its own height and centres inside the band, so the
+   extra room this adds flows into it evenly rather than as dead space. */
+.hero{position:relative;background:var(--ink-900);display:flex;flex-direction:column;
+  justify-content:center;padding-block:40px;min-height:100vh;min-height:100svh}
+/* Full-bleed, NOT capped: the sand panel must reach the right viewport edge at
+   every width. 32vw reproduces its 461px width at 1440 exactly, then caps at
+   660 so it never sprawls on an ultra-wide screen. */
+.hero__grid{flex:1;width:100%;display:grid;
+  grid-template-columns:1fr min(32vw,660px);align-items:stretch;min-height:600px}
+
+/* Top padding matches the panel's margin + padding, so both eyebrows start level. */
+.hero__main{display:flex;flex-direction:column;
+  padding:calc(var(--hero-inset) + var(--space-8)) var(--hero-pad-x) var(--hero-inset)}
+
+.hero__title{margin:22px 0 0;max-width:16ch;font-family:var(--font-display);
+  font-weight:var(--weight-regular);
+  font-size:clamp(48px,max(min(6.9vw,92px),calc(92px + var(--grow)*.06)),150px);
+  line-height:var(--leading-tight);
+  letter-spacing:var(--tracking-display);color:var(--paper-000)}
+/* Width matches "...brings curiosity," (the longer of the two lines, measured
+   at this font/size) plus a small buffer — so the box's right edge sits at
+   the comma instead of trailing off into blank space. The <br> in the markup
+   forces the break there regardless of viewport; this width just stops the
+   box being wider than the text needs. */
+.hero__lede{margin:26px 0 0;max-width:26.2em;
+  font-size:clamp(16px,calc(25px + var(--grow0)*.016),40px);
+  line-height:var(--leading-normal);color:var(--ink-200)}
+
+/* Centred in the space between the lede and the CTA pill: both margins auto.
+   On a short/typical window (~900px tall) every size below equals its old
+   fixed value — nothing changes there. Only once the viewport is taller than
+   that does a share of the extra room grow the portrait, name and figures,
+   so a tall screen fills with bigger content instead of pure gap. */
+.hero__identity{display:flex;align-items:center;gap:var(--space-8);margin:auto 0}
+.hero__portrait{width:clamp(168px,max(calc(168px + (100vh - 900px)*.3),calc(168px + var(--grow0)*.106)),270px);
+  height:clamp(168px,max(calc(168px + (100vh - 900px)*.3),calc(168px + var(--grow0)*.106)),270px);
+  flex:none;object-fit:cover;object-position:50% 22%;border-radius:var(--radius-pill)}
+.hero__name{font:var(--weight-regular)
+  clamp(36px,max(calc(36px + (100vh - 900px)*.05),calc(36px + var(--grow0)*.023)),58px)/1.15 var(--font-display);
+  color:var(--paper-000)}
+.hero__meta{margin-top:10px;
+  font-size:clamp(16px,max(calc(16px + (100vh - 900px)*.02),calc(16px + var(--grow0)*.010)),26px);
+  line-height:var(--leading-relaxed);color:var(--ink-300)}
+.hero__meta a{color:inherit;border-bottom-color:var(--ink-500)}
+.hero__meta a:hover{color:var(--paper-000);border-bottom-color:var(--teal-400)}
+
+/* Sized to its content rather than stretched to the column width — the pill
+   reads as a compact control, not a bar spanning the full measure. */
+/* Vertical padding is deliberately restrained (16px, not scaling) and the
+   link font-size below has a low ceiling — a nav pill should stay a thin,
+   wide capsule at any screen size, not swell into a tall oval as things
+   scale up. flex-wrap:nowrap — width:fit-content + wrap is an intrinsic-sizing
+   edge case some browsers get wrong, wrapping to an awkward 3-then-1 split
+   in the ~1090–1140px band even though the content comfortably fits on one
+   line there (measured 100px+ to spare at the tightest point). Desktop never
+   needs to wrap; mobile re-enables it deliberately below. */
+.hero__cta{display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;
+  gap:12px 32px;align-self:flex-start;width:fit-content;
+  margin:0;padding:12px 30px;background:var(--sand-050);
+  border-radius:var(--radius-pill);box-shadow:var(--shadow-lg);list-style:none}
+/* Underline is a ::after, not border-bottom — its width can move independently
+   of the full-width text box. border-bottom:none cancels the DS base a{}
+   underline (which darkens toward near-black on hover) so only this line shows.
+   On hover it goes shorter and fatter — width shrinks in as it thickens. */
+.hero__cta a{position:relative;display:inline-block;flex-shrink:0;font-family:var(--font-ui);
+  font-weight:var(--weight-bold);font-size:clamp(14px,calc(14px + var(--grow0)*.003),19px);
+  color:var(--ink-700);padding-bottom:5px;white-space:nowrap;
+  border-bottom:none;transition:color var(--duration-fast) var(--ease-standard)}
+.hero__cta a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
+  background:var(--teal-500);
+  transition:height var(--duration-fast) var(--ease-standard),
+    left var(--duration-fast) var(--ease-standard),
+    right var(--duration-fast) var(--ease-standard)}
+.hero__cta a:hover{color:var(--ink-900)}
+.hero__cta a:hover::after{height:4px;left:22%;right:22%}
+
+/* The 120px arc: warm sand against navy, used exactly once on the site.
+   Arc and its clearance scale above 1440 so the curve keeps its proportion. */
+.hero__stats{display:flex;flex-direction:column;background:var(--sand-050);
+  border-radius:clamp(80px,calc(120px + var(--grow0)*.073),190px) 0 0
+                clamp(80px,calc(120px + var(--grow0)*.073),190px);
+  margin:var(--hero-inset) 0;
+  padding:var(--space-8) var(--space-10) var(--space-8)
+          clamp(44px,calc(68px + var(--grow0)*.044),112px)}
+/* Lowered, with the rule pulled down to sit as close to "9" as the note below
+   sits above its own hairline — same 28px gap on both. Bottom margin untouched,
+   so the panel's own height and its bottom alignment to the CTA pill don't move. */
+.hero__stats .eyebrow{margin-top:34px}
+/* Fills the taller panel. Each row is an equal-height cell between the hairlines,
+   with its number/text group centred inside — not just top-anchored to the line. */
+.stats__group{margin-top:0;margin-bottom:34px;flex:1;display:flex;flex-direction:column}
+.stats__group dd{margin-inline-start:0}
+.stats__row{flex:1;display:flex;flex-direction:column;justify-content:center;padding:8px 0}
+.stats__row+.stats__row{border-top:1px solid var(--sand-200)}
+/* Same "unchanged below 900px, grows past it" clamp as the portrait/name. */
+.stats__figure{font:var(--weight-regular)
+  clamp(54px,max(calc(54px + (100vh - 900px)*.05),calc(54px + var(--grow0)*.033)),86px)/.95 var(--font-display);
+  color:var(--ink-900);font-variant-numeric:tabular-nums}
+.stats__label{margin-top:16px;
+  font:var(--weight-bold) clamp(14px,calc(14px + var(--grow0)*.0083),22px) var(--font-ui);
+  color:var(--ink-900)}
+/* Condensed relative to the label above — but figure→label (16px, above) is
+   the number/text gap and stays untouched. */
+.stats__note{margin-top:3px;
+  font:var(--weight-light) clamp(12px,calc(12px + var(--grow0)*.0073),19px)/1.4 var(--font-ui);
+  color:var(--ink-600)}
+
+/* --- Bands --------------------------------------------------------------- */
+
+.band{padding:var(--band-y) var(--pad-x)}
+.band--hairline{border-top:1px solid var(--border-subtle)}
+.band--navy{background:var(--ink-900)}
+
+.band__title{margin:24px 0 0;font-family:var(--font-display);font-weight:var(--weight-regular);
+  letter-spacing:var(--tracking-display);line-height:1.08;color:var(--ink-900);text-wrap:pretty}
+.band__title--lead{max-width:30ch;
+  font-size:clamp(34px,max(min(4.7vw,56px),calc(56px + var(--grow)*.036)),90px);margin-bottom:60px}
+.band__title--sub{font-size:clamp(32px,max(min(4vw,48px),calc(48px + var(--grow)*.031)),78px);margin:20px 0 48px}
+.band__title--onDark{color:var(--paper-000)}
+
+/* How I help organisations — identical hairline above each column. */
+.help-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-8)}
+.help-grid > *{padding-top:22px;border-top:1px solid var(--border-default)}
+.help-grid h3{margin:0 0 var(--space-3);font:var(--weight-regular) var(--text-2xl)/1.2 var(--font-display);
+  color:var(--ink-900)}
+.help-grid p{margin:0;font-size:clamp(15px,calc(15px + var(--grow0)*.0073),22px);
+  line-height:var(--leading-relaxed);color:var(--ink-700)}
+
+/* My approach — warm band, image edge to edge. */
+.approach{display:grid;grid-template-columns:1fr 1fr;align-items:stretch;
+  background:var(--sand-050);border-top:1px solid var(--border-warm)}
+.approach__text{padding:96px 48px 96px var(--pad-x)}
+.approach__text .band__title--sub{margin-bottom:40px}
+.approach__row{padding:22px 0;border-top:1px solid var(--sand-200)}
+.approach__row:last-child{border-bottom:1px solid var(--sand-200)}
+.approach__row h3{margin:0 0 var(--space-2);font:var(--weight-regular) 20px var(--font-display);color:var(--ink-900)}
+.approach__row p{margin:0;max-width:46ch;font-size:clamp(14.5px,calc(14.5px + var(--grow0)*.0068),21px);
+  line-height:var(--leading-relaxed);color:var(--ink-700)}
+/* min-height scales with viewport width (not just a flat floor) because the
+   row's actual driver — the text column — gets SHORTER as the viewport
+   widens (its 1fr column grows wide enough to wrap fewer lines), while the
+   image column keeps growing wider. Left unchecked, that makes the image's
+   box progressively more landscape with no ceiling, eventually cropping
+   past what any single object-position can keep in frame — including the
+   "Camp Cove" sign above his head, which needs ~46% of the source photo's
+   height visible to stay in shot (measured at 1920px, the last width where
+   it held). 41vw keeps the box at roughly that same aspect ratio at any
+   width; the 2200px ceiling only matters past ~5850px viewports, wider than
+   any real monitor, so in practice this doesn't plateau like the old cap
+   did (960px, which was already too short by 2560px wide). */
+.approach__figure{position:relative;min-height:clamp(520px,41vw,2200px);overflow:hidden}
+.approach__figure picture{display:contents}
+/* As the viewport widens, this column's height grows more slowly than its
+   width (the text column wraps to fewer lines, capping the row's height),
+   so cover crops progressively more of the image. 44% was crop-balanced but
+   let the legs/backpack disappear first at wide widths; 48% keeps full head-
+   to-shoe framing much further out — verified head-to-floor still fits at
+   1081, 1760 and 2400px. */
+.approach__figure img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:42% 48%}
+
+/* What I do */
+.expertise__row{display:grid;grid-template-columns:.9fr 1.1fr;gap:var(--space-10);padding:var(--space-8) 0;
+  border-top:1px solid var(--border-subtle)}
+.expertise__row:last-child{border-bottom:1px solid var(--border-subtle)}
+.expertise__row h3{margin:0;
+  font:var(--weight-regular) clamp(28px,calc(34px + var(--grow0)*.021),54px)/1.1 var(--font-display);
+  letter-spacing:var(--tracking-display);color:var(--ink-900)}
+.expertise__row p{margin:0;font-size:clamp(15px,calc(16px + var(--grow0)*.0083),24px);
+  line-height:var(--leading-relaxed);color:var(--ink-700)}
+
+/* Where I've worked — five equal columns, centred on both axes. Bottom
+   padding uses the same --band-y token as the "Fields of expertise" band
+   above, so the navy space below the cells matches the light space between
+   its last hairline and this band exactly, not just approximately. */
+.industries{padding:88px var(--pad-x) var(--band-y)}
+.industries .band__title--sub{margin-bottom:44px}
+.industries__grid{display:grid;grid-template-columns:repeat(5,1fr);
+  border-top:1px solid var(--border-inverse);border-bottom:1px solid var(--border-inverse)}
+.industries__cell{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:36px var(--space-5);border-right:1px solid var(--border-inverse)}
+.industries__cell:last-child{border-right:0}
+.industries__name{font:var(--weight-regular) clamp(19px,calc(22px + var(--grow0)*.0125),34px)/1.15 var(--font-display);
+  color:var(--paper-000)}
+.industries__focus{margin-top:var(--space-2);font:var(--weight-light) var(--text-2xs)/1.55 var(--font-ui);
+  color:var(--ink-300)}
+
+/* --- Footer -------------------------------------------------------------- */
+
+/* Thin band on every page — was About-only, now the standard footer. */
+.site-footer{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--space-10);
+  padding:36px var(--pad-x);background:var(--ink-900)}
+/* Home only: navy-on-navy against the industries band above it, so the
+   footer would merge into it with no visible seam. Sand breaks the two apart. */
+.site-footer--sand{background:var(--sand-050)}
+.site-footer--sand .site-footer__name{color:var(--ink-900)}
+.site-footer--sand .site-footer__meta{color:var(--ink-600)}
+.site-footer--sand .site-footer__meta a{border-bottom-color:var(--sand-400)}
+.site-footer--sand .site-footer__meta a:hover{color:var(--ink-900);border-bottom-color:var(--brass-500)}
+.site-footer--sand .site-footer__legal{color:var(--ink-500)}
+.site-footer__name{font:var(--weight-regular) clamp(18px,calc(22px + var(--grow0)*.0156),37px) var(--font-display);
+  color:var(--paper-000)}
+.site-footer__meta{margin-top:var(--space-2);font-size:var(--text-xs);color:var(--ink-300)}
+.site-footer__meta a{color:inherit;border-bottom-color:var(--ink-500)}
+.site-footer__meta a:hover{color:var(--paper-000);border-bottom-color:var(--teal-400)}
+.site-footer__legal{margin-top:var(--space-5);font-size:var(--text-2xs);color:var(--ink-400)}
+
+/* --- Scroll reveal ------------------------------------------------------- */
+
+.js-reveal [data-reveal]{opacity:0;transform:translateY(18px)}
+.js-reveal [data-reveal].is-in{opacity:1;transform:none;
+  transition:opacity var(--duration-reveal) var(--ease-out),transform var(--duration-reveal) var(--ease-out)}
+@media (prefers-reduced-motion:reduce){
+  .js-reveal [data-reveal]{opacity:1;transform:none}
+}
+
+/* ==========================================================================
+   Shared page furniture — masthead, labels, fields
+   ========================================================================== */
+
+.label{font-family:var(--font-ui);font-weight:var(--weight-bold);font-size:10.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--ink-500)}
+
+/* Four of five pages open on a full-width navy masthead over light content. */
+.masthead{position:relative;background:var(--ink-900);padding:96px var(--pad-x) 72px}
+.masthead__title{margin:20px 0 0;font-family:var(--font-display);font-weight:var(--weight-regular);
+  font-size:clamp(44px,max(min(5.3vw,76px),calc(76px + var(--grow)*.05)),124px);
+  line-height:var(--leading-tight);letter-spacing:-.025em;
+  color:var(--paper-000);text-wrap:pretty}
+.masthead__sub{margin:22px 0 0;max-width:54ch;font-size:clamp(16px,calc(19px + var(--grow0)*.0094),28px);
+  line-height:1.6;color:var(--ink-200)}
+/* Publications' masthead sits deeper on desktop; mobile uses the §13 rhythm. */
+.masthead--tall{padding-bottom:88px}
+
+/* Menu over photography rather than navy. */
+.menu__button--onPhoto{background:rgba(11,20,27,.34);border-color:rgba(255,255,255,.28)}
+.menu__button--onPhoto:hover{background:rgba(11,20,27,.52)}
+
+.btn--md{height:40px;padding:0 var(--space-5);font-size:var(--text-sm);gap:var(--space-2)}
+
+.closer{display:flex;align-items:center;justify-content:space-between;gap:var(--space-6);
+  margin-top:36px;padding-top:22px;border-top:1px solid var(--border-subtle)}
+.closer p{margin:0;font-size:var(--text-xs);line-height:var(--leading-normal);color:var(--ink-500)}
+
+/* ==========================================================================
+   About me — a persona sheet, not a deck
+   ========================================================================== */
+
+.about{display:grid;grid-template-columns:calc(340px + var(--bleed)) 1fr;align-items:stretch}
+
+.rail{background:var(--sand-050);border-right:1px solid var(--sand-200);
+  padding:44px var(--space-8) 40px calc(var(--bleed) + var(--space-8))}
+.rail__portrait{width:100%;height:280px;object-fit:cover;object-position:52% 34%;border-radius:var(--radius-sm)}
+.rail__name{margin:22px 0 0;font:var(--weight-regular) 34px/1.05 var(--font-display);
+  letter-spacing:var(--tracking-display);color:var(--ink-900)}
+.rail__role{margin-top:var(--space-2);font:var(--weight-bold) var(--text-2xs) var(--font-ui);
+  letter-spacing:.06em;color:var(--brass-700)}
+.rail__quote{margin:24px 0 28px;padding-left:var(--space-4);border-left:1px solid var(--brass-500);
+  font:var(--weight-regular) 17px/1.5 var(--font-display);color:var(--ink-800)}
+
+.field{display:grid;grid-template-columns:64px 1fr;gap:14px;padding:11px 0;
+  border-bottom:1px solid var(--sand-200)}
+.field:last-of-type{border-bottom:0}
+.field__value{font:var(--weight-light) 13.5px/1.45 var(--font-ui);color:var(--ink-900)}
+.field__value a{color:inherit;border-bottom-color:var(--sand-400)}
+.field__value a:hover{color:var(--ink-900);border-bottom-color:var(--brass-500)}
+
+.tools{margin-top:30px}
+.tools__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0 18px;margin-top:10px}
+.tools__item{display:flex;align-items:center;gap:10px;padding:var(--space-2) 0;
+  border-bottom:1px solid var(--sand-200)}
+.tools__item img{width:16px;height:16px;flex:none;object-fit:contain}
+.tools__item span{font:var(--weight-light) 13.5px var(--font-ui);color:var(--ink-800)}
+/* On white (About's right column) the sand-tinted hairline reads as a mismatch
+   next to Skills' cooler --border-subtle rules — swap it here. */
+.about__block--tools .tools__item{border-bottom-color:var(--border-subtle)}
+
+.about__main{padding:44px calc(var(--bleed) + 44px) 44px 44px}
+.about__block{padding:28px 0;border-bottom:1px solid var(--border-subtle)}
+.about__block:first-child{padding-top:0}
+.about__block:last-child{border-bottom:0;padding-bottom:0}
+.about__bio{margin:14px 0 0;max-width:66ch;font-size:clamp(15px,calc(16px + var(--grow0)*.0083),24px);
+  line-height:1.75;color:var(--ink-700)}
+
+/* Personality — pure CSS flip, no JS state (an earlier JS version lagged). */
+.traits{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--space-3);margin-top:var(--space-4)}
+/* Hover is read off .flip (never transforms) rather than .flip__inner (which
+   does) — driving :hover from the rotating element itself makes its own
+   hit-tested area foreshorten and shift as it turns, so near the edges the
+   cursor keeps drifting outside it mid-rotation, un-hovering and re-hovering
+   in a stuck-feeling flicker. A static hover target removes that entirely. */
+.flip{perspective:900px;height:158px;cursor:pointer}
+.flip__inner{position:relative;width:100%;height:100%;outline:none;
+  transform-style:preserve-3d;transition:transform var(--duration-flip) var(--ease-out)}
+.flip:hover .flip__inner,.flip__inner:focus{transform:rotateY(180deg) translateY(-3px)}
+.flip__inner:focus-visible{box-shadow:var(--ring-focus)}
+.flip__face{position:absolute;inset:0;border-radius:12px;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.flip__front{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-3);
+  text-align:center;padding:18px 14px;background:var(--paper-000);
+  border:1px solid var(--border-default);box-shadow:var(--shadow-xs);overflow:hidden}
+/* Affordance is visual only — a folded corner, never a "hover" label. */
+.flip__front::after{content:"";position:absolute;top:0;right:0;width:26px;height:26px;
+  background:linear-gradient(225deg,var(--teal-500) 0 50%,transparent 50%)}
+.flip__num{font:var(--weight-regular) 15px var(--font-display);letter-spacing:.06em;color:var(--brass-500)}
+.flip__rule{width:20px;height:1px;background:var(--brass-500)}
+.flip__trait{font:var(--weight-regular) 19px/1.15 var(--font-display);
+  letter-spacing:var(--tracking-tight);color:var(--ink-900)}
+.flip__back{transform:rotateY(180deg);display:flex;align-items:center;padding:var(--space-4) 14px;
+  background:var(--ink-800)}
+.flip__back p{margin:0;font-size:var(--text-2xs);line-height:var(--leading-normal);color:var(--ink-100)}
+
+.principles{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-8);margin-top:18px}
+.principles__dash{display:block;width:24px;height:1px;background:var(--brass-500);margin-bottom:14px}
+.principles h3{margin:0;font:var(--weight-regular) 22px/1.2 var(--font-display);
+  letter-spacing:var(--tracking-tight);color:var(--ink-900)}
+.principles p{margin:var(--space-2) 0 0;font-size:14px;line-height:1.6;color:var(--ink-700)}
+
+.skills{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;margin-top:18px}
+.skills__head{font:var(--weight-bold) var(--text-2xs)/1.35 var(--font-ui);color:var(--ink-900);
+  padding-bottom:10px;border-bottom:1px solid var(--border-subtle)}
+.skills li{padding:9px 0;border-bottom:1px solid var(--border-subtle);
+  font:var(--weight-light) 13.5px/1.45 var(--font-ui);color:var(--ink-700)}
+.skills ul{margin:0;padding:0;list-style:none}
+
+/* ==========================================================================
+   Portfolio — tabbed case studies
+   ========================================================================== */
+
+.pf-masthead{padding-bottom:40px}
+/* No horizontal padding here — .masthead already insets by --gutter, so this
+   sits flush with the title above and the photo/glance row below. */
+.cs-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-3);
+  margin-top:44px}
+.cs-tab{display:block;width:100%;text-align:left;padding:18px var(--space-5);border-radius:12px;
+  cursor:pointer;font-family:var(--font-ui);
+  background:rgba(255,255,255,.05);border:1px solid var(--border-inverse);color:var(--ink-200);
+  transition:background-color var(--duration-base) var(--ease-out),
+             color var(--duration-base) var(--ease-out),
+             border-color var(--duration-base) var(--ease-out)}
+.cs-tab[aria-selected="true"]{background:var(--sand-050);border-color:var(--sand-050);color:var(--ink-900)}
+.cs-tab__kind{font:var(--weight-bold) 10px var(--font-ui);letter-spacing:.14em;
+  text-transform:uppercase;opacity:.7}
+.cs-tab__title{display:block;margin-top:7px;font:var(--weight-regular) var(--text-md)/1.25 var(--font-display);
+  letter-spacing:var(--tracking-tight)}
+
+.cs-panel{padding:56px var(--pad-x) 64px}
+.cs-panel[hidden]{display:none}
+.cs-panel__title{margin:16px 0 0;
+  font:var(--weight-regular) clamp(34px,max(min(3.6vw,52px),calc(52px + var(--grow)*.034)),85px)/1.06 var(--font-display);
+  letter-spacing:-.025em;color:var(--ink-900);text-wrap:pretty}
+
+.cs-top{display:grid;grid-template-columns:1fr 380px;gap:28px;margin-top:40px;align-items:stretch}
+.cs-photo{position:relative;min-height:420px;border-radius:var(--radius-lg);overflow:hidden}
+.cs-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+
+/* Sand panel with a teal rule — replaced a white callout that fought the page. */
+.glance{background:var(--sand-050);border-radius:var(--radius-lg);padding:28px 26px;
+  display:flex;flex-direction:column}
+.glance__figure{margin-top:20px;padding-left:18px;border-left:2px solid var(--teal-500)}
+.glance__num{font:var(--weight-regular) clamp(38px,calc(46px + var(--grow0)*.025),70px)/1 var(--font-display);
+  color:var(--ink-900);
+  font-variant-numeric:tabular-nums}
+.glance__unit{margin-top:10px;max-width:26ch;font:var(--weight-light) 13.5px/1.55 var(--font-ui);
+  color:var(--ink-700)}
+.glance__fields{margin-top:26px;border-top:1px solid var(--sand-200)}
+.glance__field{padding:14px 0;border-bottom:1px solid var(--sand-200)}
+.glance__field:last-child{border-bottom:0}
+.glance__value{margin-top:6px;font:var(--weight-light) 14px/1.5 var(--font-ui);color:var(--ink-900)}
+
+/* Chapters carry a brass dash, never a numeral. */
+.chapter{display:grid;grid-template-columns:52px 1fr;gap:var(--space-6);padding:30px 0;
+  border-top:1px solid var(--border-subtle)}
+.chapter__dash{display:flex;align-items:center;height:30px}
+.chapter__dash span{display:block;width:28px;height:1px;background:var(--brass-500)}
+.chapter h3{margin:0 0 var(--space-3);font:var(--weight-regular) var(--text-2xl)/1.15 var(--font-display);
+  letter-spacing:var(--tracking-display);color:var(--ink-900)}
+/* max() of the reading measure and the photo's own width. The second term is
+   expressed as 100% minus a fixed offset rather than a vw-based calc — 100%
+   here resolves against the paragraph's own containing block (the chapter's
+   1fr content column) at actual layout time, so it lands exactly on the
+   photo's right edge with no scrollbar/rounding drift. The offset is just
+   the glance column + its gap (380+28=408): both the photo and this 1fr
+   column start at the same left edge (the panel's), so the same subtraction
+   that turns the panel width into the photo's width also turns this column's
+   width into the paragraph width needed to land on the photo's right edge —
+   the dash column's own inset cancels out of the equation. At narrow/medium
+   widths the normal 68ch measure governs (free to run past the photo's edge,
+   which is fine there); once the photo column grows past 68ch the text
+   widens to match it. */
+.chapter p{margin:0;max-width:max(68ch,calc(100% - 408px));
+  font-size:clamp(15.5px,calc(15.5px + var(--grow0)*.0078),23px);
+  line-height:1.7;color:var(--ink-700)}
+
+/* ==========================================================================
+   Publications — 60/40, peer-reviewed work apart from the writing archive
+   ========================================================================== */
+
+/* fr, not %, so the explicit 48px gap doesn't push the columns past 100% —
+   that gap is the same 48px as pubs__main's own left padding (the covers'
+   margin from the page edge), and padding-right repeats it on the far side,
+   so the archive card sits with equal white space on both flanks. */
+.pubs{position:relative;display:grid;grid-template-columns:1.5fr 1fr;gap:0 48px;
+  align-items:start;max-width:var(--content-max);margin-inline:auto;padding-right:48px}
+.pubs__main{padding:48px 0 11px 48px}
+.pub{display:grid;grid-template-columns:150px 1fr;gap:28px;padding:34px 0;
+  align-items:stretch;border-bottom:1px solid var(--border-subtle)}
+.pub:last-child{border-bottom:0}
+/* height:100% + stretch (not height:auto) crops each cover to the text
+   column's own height via object-fit, so covers of different aspect ratios
+   (portrait thesis vs. landscape-ish journal cover) still end flush with
+   "View publication" instead of leaving a gap sized by the image's own
+   natural proportions. */
+.pub img{width:150px;height:100%;object-fit:cover;border-radius:var(--radius-xs);box-shadow:var(--shadow-sm)}
+.pub h3{margin:12px 0 0;max-width:32ch;
+  font:var(--weight-regular) clamp(26px,calc(32px + var(--grow0)*.008),40px)/1.15 var(--font-display);
+  letter-spacing:var(--tracking-display);color:var(--ink-900);text-wrap:pretty}
+.pub__venue{margin-top:14px;font:var(--weight-light) 14px/1.6 var(--font-ui);color:var(--ink-600)}
+.pub__link{display:inline-block;margin-top:20px;font:var(--weight-bold) var(--text-xs) var(--font-ui);
+  color:var(--teal-700);border-bottom-color:transparent}
+.pub__link:hover{border-bottom-color:var(--teal-700)}
+
+/* Self-contained card — same 6px radius as the rail portrait on About.
+   overflow:hidden both clips the rounded corners and is what makes the
+   scrolling list's bottom double as the card's own bottom edge, so sizing
+   the list (below) to the button's bottom sizes the whole card to it too. */
+/* margin-top keeps the sand fill from touching the navy masthead directly —
+   the reports column has no fill of its own so that seam was invisible for
+   it, but sand-on-navy with zero gap read as the box bordering the hero.
+   Since the box's bottom is pinned to the button (JS below) regardless of
+   where its top sits, pushing the top down here also shortens the box —
+   doing both jobs (gap from the hero, less dead air above the title) in one
+   change; padding-top is cut too so the title sits close to the new edge
+   rather than floating in the padding that used to align it with "Reports
+   and articles" (that title-to-title alignment no longer holds). */
+.archive{background:var(--sand-050);border-radius:var(--radius-sm);overflow:hidden;
+  margin-top:32px;padding-top:24px}
+.archive__head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-4);
+  padding:0 var(--space-5) 14px}
+.archive__count{font:var(--weight-light) 11.5px var(--font-ui);color:var(--ink-400)}
+/* Height is set by JS to land exactly on the second "View publication"
+   button's bottom (760px was an approximation); this is just a sane floor
+   before that runs, and the fallback if JS is unavailable. */
+.archive__list{max-height:760px;overflow-y:auto;border-top:1px solid var(--sand-200)}
+.post{display:grid;grid-template-columns:1fr auto;gap:var(--space-5);align-items:baseline;
+  padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--sand-200);
+  border-bottom-color:var(--sand-200);
+  transition:background-color var(--duration-fast) var(--ease-standard)}
+.post:last-child{border-bottom:0}
+/* display:grid above would otherwise defeat the hidden attribute the
+   pagination script sets. */
+.post[hidden]{display:none}
+.post:hover{background:var(--sand-100)}
+.post__title,.post__date{display:block}
+.post__title{font:var(--weight-regular) clamp(15.5px,calc(15.5px + var(--grow0)*.0012),17px)/1.4 var(--font-ui);
+  color:var(--ink-900)}
+.post__date{margin-top:5px;font:var(--weight-light) var(--text-2xs) var(--font-ui);color:var(--ink-500)}
+.post__read{font:var(--weight-bold) var(--text-2xs) var(--font-ui);color:var(--teal-700);white-space:nowrap}
+
+/* Mobile pagination control for the posts archive (§13.3). Desktop shows all
+   18 in the scroll panel, so the script leaves this hidden there. */
+.archive__more{padding:18px var(--space-5) 26px}
+.archive__more[hidden]{display:none}
+.archive__more-btn{display:flex;align-items:center;justify-content:center;gap:var(--space-2);
+  width:100%;padding:13px 18px;background:transparent;border:1px solid var(--ink-200);
+  border-radius:var(--radius-md);cursor:pointer;
+  font:var(--weight-bold) 12.5px var(--font-ui);color:var(--ink-900);
+  transition:background-color var(--duration-fast) var(--ease-standard)}
+.archive__more-btn:hover{background:var(--sand-100)}
+
+/* ==========================================================================
+   Contact — the one page with no navy masthead
+   ========================================================================== */
+
+.contact{display:grid;grid-template-columns:52% 48%;min-height:100vh;min-height:100svh}
+/* margin:0 clears the UA's default figure margin (1em 40px), which was
+   insetting the photo from the edges. */
+.contact__figure{position:relative;overflow:hidden;margin:0}
+.contact__figure img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  object-position:48% 58%}
+/* Top-down scrim only: the coffee cup at the foot of the frame stays unshaded. */
+.contact__scrim{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(11,20,27,.82) 0%,rgba(11,20,27,.42) 30%,rgba(11,20,27,0) 56%)}
+/* left matches the Menu button's inset (--pad-x, same as About/Portfolio/
+   Publications) so the two sit on the same vertical line. */
+.contact__quote{position:absolute;left:var(--pad-x);right:var(--pad-x);top:78px}
+.contact__quote blockquote{margin:0;max-width:17ch;
+  font:var(--weight-regular) clamp(26px,calc(36px + var(--grow0)*.023),58px)/1.22 var(--font-display);
+  letter-spacing:var(--tracking-display);color:var(--paper-000);text-wrap:pretty}
+.contact__attrib{margin-top:18px;display:flex;align-items:center;gap:var(--space-3)}
+.contact__attrib span:first-child{display:block;width:24px;height:1px;background:var(--brass-500)}
+.contact__attrib span:last-child{font:var(--weight-light) var(--text-xs) var(--font-ui);color:var(--ink-200)}
+
+.contact__panel{background:var(--sand-050);display:flex;flex-direction:column;justify-content:center;
+  padding:72px clamp(32px,4vw,72px)}
+.contact__panel > *{width:100%;max-width:clamp(420px,calc(560px + var(--grow0)*.25),860px)}
+.contact__title{margin:22px 0 0;
+  font:var(--weight-regular) clamp(40px,max(min(5.3vw,76px),calc(76px + var(--grow)*.05)),124px)/1 var(--font-display);
+  letter-spacing:-.025em;color:var(--ink-900)}
+.contact__lede{margin:26px 0 0;max-width:42ch;font-size:clamp(15px,calc(18px + var(--grow0)*.0094),27px);
+  line-height:1.7;color:var(--ink-700)}
+.contact__rows{margin-top:48px;border-top:1px solid var(--sand-200)}
+.contact__row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:var(--space-5);
+  padding:28px 0;border-bottom:1px solid var(--sand-200);border-bottom-color:var(--sand-200);
+  transition:opacity var(--duration-fast) var(--ease-standard)}
+.contact__row:hover{opacity:.62}
+.contact__row .label{display:block}
+.contact__value{display:block;margin-top:9px;
+  font:var(--weight-regular) clamp(22px,calc(28px + var(--grow0)*.0156),43px)/1.2 var(--font-display);
+  letter-spacing:var(--tracking-tight);color:var(--ink-900)}
+.contact__arrow{font:var(--weight-regular) 20px var(--font-display);color:var(--brass-500)}
+
+/* ==========================================================================
+   Responsive — tablet reflow, then the mobile design of brief §13
+   ========================================================================== */
+
+/* --- Tablet / intermediate (undesigned, §0.3) ----------------------------
+   The desktop splits stop working before the mobile design starts, so these
+   collapse them early. Type and spacing stay on the desktop ramp.
+   ------------------------------------------------------------------------ */
+
+@media (max-width:1080px){
+  .hero{min-height:0;padding-block:0}
+  .hero__grid{grid-template-columns:1fr;min-height:0}
+  .hero__stats{border-radius:0;margin:0;padding:56px var(--pad-x)}
+  .hero__stats .eyebrow{margin-top:0}
+  .stats__group{margin-top:18px;margin-bottom:0}
+  .stats__row{flex:none;justify-content:flex-start;padding:0}
+  .stats__row+.stats__row{padding-top:22px}
+  /* Stacked: no free space for the auto margins to share, so space explicitly. */
+  .hero__identity{margin:44px 0 0}
+  .hero__cta{margin:44px 0 0}
+  .approach{grid-template-columns:1fr}
+  .approach__text{padding:72px var(--pad-x)}
+  .approach__figure{min-height:360px}
+  .industries__grid{grid-template-columns:repeat(2,1fr)}
+  .industries__cell{border-right:1px solid var(--border-inverse);
+    border-bottom:1px solid var(--border-inverse)}
+  .industries__cell:nth-child(2n){border-right:0}
+
+  .about{grid-template-columns:1fr}
+  .rail{border-right:0;border-bottom:1px solid var(--sand-200);
+    padding:44px var(--pad-x) 40px}
+  .about__main{padding:44px var(--pad-x)}
+  .traits{grid-template-columns:repeat(2,1fr)}
+  .skills{grid-template-columns:repeat(2,1fr)}
+  .cs-top{grid-template-columns:1fr}
+  /* padding-right:0 cancels the desktop-only card inset (below), which would
+     otherwise stack with --pad-x here and skew the stacked layout off-centre. */
+  .pubs{grid-template-columns:1fr;max-width:none;padding-right:0}
+  .pubs__main{padding:48px var(--pad-x) 56px}
+  .archive{border-top:1px solid var(--sand-200)}
+  .contact{grid-template-columns:1fr;min-height:0}
+  .contact__figure{min-height:520px}
+  .contact__panel{padding:72px var(--pad-x)}
+}
+
+/* --- Mobile (§13) — a single reflow of the same content ------------------
+   Nothing added, nothing dropped, no copy changes: only geometry and type.
+   Small type (eyebrows, labels, hairline items, metadata) does not shrink —
+   it is already at the system floor (§13.2).
+   ------------------------------------------------------------------------ */
+
+@media (max-width:700px){
+  /* §13.1 vertical rhythm: mastheads 96→70, bands 88→40. */
+  .masthead{padding:70px var(--pad-x) 40px}
+  .band{padding:40px var(--pad-x)}
+  .industries{padding:40px var(--pad-x)}
+
+  /* §13.2 type scale */
+  .hero__title{font-size:40px;max-width:none}
+  .hero__lede{font-size:16px;max-width:none}
+  .hero__lede br{display:none} /* let it wrap naturally at this measure */
+  .masthead__title{font-size:40px;max-width:none}
+  .masthead__sub{font-size:16px}
+  .band__title--lead,.band__title--sub{font-size:30px;max-width:none}
+  .cs-panel__title{font-size:31px}
+  .glance__num{font-size:38px}
+  .pub h3{font-size:26px}
+  .contact__title{font-size:40px}
+  .contact__quote blockquote{font-size:26px}
+  .expertise__row h3{font-size:28px}
+  .rail__name{font-size:28px}
+
+  /* Home hero — stacks; figures become a full-width band, arc removed. */
+  /* Clears the floating Menu button (top:22px + ~38px tall). */
+  .hero__main{padding:86px var(--gutter) 26px}
+  .hero__identity{margin:34px 0 0;gap:20px}
+  .hero__portrait{width:120px;height:120px}
+  .hero__name{font-size:23px}
+  .hero__meta{margin-top:8px;font-size:13.5px}
+  .hero__stats{padding:44px var(--gutter)}
+  .stats__figure{font-size:50px}
+  .stats__label{margin-top:8px}
+  /* §13.1 — the 120px arc reads as a mistake at this width. */
+  .hero__stats{border-radius:0}
+
+  /* Four CTAs wrap to two lines rather than scrolling sideways (§13.1) —
+     re-enables wrap, which the desktop rule above turns off. Slimmer than
+     desktop: smaller text and tighter padding so the pill reads as a thin
+     band, not a fat oval, at this width. */
+  .hero__cta{flex-wrap:wrap;align-self:center;max-width:100%;justify-content:center;
+    gap:8px 16px;padding:12px 22px}
+  .hero__cta a{font-size:13.5px;padding-bottom:4px}
+
+  .help-grid{grid-template-columns:1fr;gap:26px}
+  .approach__text{padding:40px var(--gutter)}
+  .approach__figure{min-height:0;height:300px}
+  /* Landscape crop for the landscape frame — the desktop crop zooms past
+     the sticky-note wall here (§0.2). */
+  .approach__figure img{object-position:50% 50%}
+  .expertise__row{grid-template-columns:1fr;gap:10px;padding:32px 0}
+
+  /* Vertical dividers become horizontal (§13.1). */
+  .industries__grid{grid-template-columns:1fr}
+  .industries__cell{border-right:0;border-bottom:1px solid var(--border-inverse);
+    padding:36px 20px}
+  .industries__cell:last-child{border-bottom:0}
+
+  /* Footer stacks centred, button last; the closer row (§13.1) stays
+     left-aligned — it's a "want the longer version" prompt, not a sign-off. */
+  .site-footer{flex-direction:column;align-items:center;text-align:center;
+    gap:22px;padding:40px var(--pad-x)}
+  .closer{flex-direction:column;align-items:flex-start;gap:22px}
+
+  /* About — rail content first, then the single column (§13.3). */
+  .rail{padding:40px var(--gutter)}
+  .rail__portrait{height:250px}
+  .about__main{padding:40px var(--gutter)}
+  .traits{grid-template-columns:1fr 1fr}   /* two-up (§13.1 exception) */
+  .tools__grid{grid-template-columns:1fr 1fr} /* two-up (§13.1 exception) */
+  .principles,.skills{grid-template-columns:1fr}
+
+  /* Portfolio — tabs stack full width and stay tappable (§13.3). */
+  .cs-tabs{grid-template-columns:1fr}
+  .cs-panel{padding:40px var(--pad-x)}
+  .cs-photo{min-height:230px}
+  .chapter{grid-template-columns:36px 1fr;gap:14px;padding:24px 0}
+
+  /* Publications — posts first, publications second (§13.3). The desktop
+     card (radius, overflow:hidden) reverts to a flat full-width band here. */
+  .archive{order:-1;padding:32px 0 0;border-top:0;border-radius:0;overflow:visible;
+    border-bottom:1px solid var(--sand-200)}
+  .archive__head{padding:0 var(--gutter) 14px}
+  .post{padding:var(--space-4) var(--gutter)}
+  /* A nested scroll region inside a scrolling page is wrong on touch (§13.3) —
+     the list paginates instead, via .archive__more. */
+  .archive__list{max-height:none;overflow:visible}
+  .pubs__main{padding:32px var(--gutter) 40px}
+  .pub{grid-template-columns:96px 1fr;gap:18px}
+  .pub img{width:96px}
+
+  /* Contact — vertical split; the photo needs an explicit height now that it
+     has no full-height column to fill (§13.3). */
+  .contact__figure{min-height:0;height:430px}
+  .contact__panel{padding:40px var(--gutter)}
+  .contact__quote{left:var(--gutter);right:var(--gutter);top:74px}
+  .contact__value{font-size:22px}
+  .contact__row{padding:22px 0}
+}
+
+/* --- Below the designed width (390px) -----------------------------------
+   Not a designed breakpoint — a floor. Long unbreakable tokens (the email
+   address, "inter-organizational") otherwise set a min-content width that
+   forces the whole page to scroll sideways on a 320px device.
+   ------------------------------------------------------------------------ */
+
+@media (max-width:400px){
+  .hero__identity{gap:14px}
+  .hero__portrait{width:96px;height:96px}
+  /* Let the long tokens break rather than push the layout wider. */
+  .hero__meta,.field__value,.contact__value,.pub h3,.post__title,
+  .glance__value,.rail__quote{overflow-wrap:anywhere}
+  .tools__grid{grid-template-columns:1fr}
+  .traits{grid-template-columns:1fr}
+  .pub{grid-template-columns:1fr;gap:14px}
+}

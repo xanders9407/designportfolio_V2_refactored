@@ -1,0 +1,19 @@
+:root{
+  /* Shadows are soft, low-contrast, tinted with the navy — never neutral black. */
+  --shadow-none:none;
+  --shadow-xs:0 1px 2px rgba(16,28,37,.05);
+  --shadow-sm:0 1px 2px rgba(16,28,37,.04),0 2px 8px rgba(16,28,37,.05);
+  --shadow-md:0 2px 4px rgba(16,28,37,.04),0 8px 20px rgba(16,28,37,.07);
+  --shadow-lg:0 4px 8px rgba(16,28,37,.05),0 18px 44px rgba(16,28,37,.10);
+  --shadow-xl:0 8px 16px rgba(16,28,37,.06),0 36px 80px rgba(16,28,37,.14);
+  --shadow-inset-top:inset 0 1px 0 rgba(255,255,255,.6);
+  --ring-focus:0 0 0 3px rgba(102,196,208,.42);
+  --ring-focus-dark:0 0 0 3px rgba(143,223,224,.34);
+
+  /* Blur is reserved for elements that float OVER content: sticky bars, sheets, popovers. */
+  --blur-chrome:saturate(180%) blur(20px); /* @kind other */
+  --blur-scrim:blur(2px); /* @kind other */
+  --scrim:rgba(16,28,37,.44);
+  --glass-light:rgba(255,255,255,.72);
+  --glass-dark:rgba(16,28,37,.68);
+}
