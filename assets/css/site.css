@@ -1,4 +1,4 @@
-@import url("../ds/styles.css");
+@import url("../ds/styles.css?v=2");
 
 /* ==========================================================================
    xanderstegehuis.co
@@ -150,7 +150,13 @@ a.btn{border-bottom:1px solid transparent}
    the comma instead of trailing off into blank space. The <br> in the markup
    forces the break there regardless of viewport; this width just stops the
    box being wider than the text needs. */
-.hero__lede{margin:26px 0 0;max-width:26.2em;
+/* 29.5em, not 26.2: the measure has to clear the hard <br> in the markup.
+   The first segment needs 29.24em in Inter, so the old 26.2em cap made it
+   wrap early and left "brings curiosity," orphaned on its own line. (26.2em
+   fitted the Times/system fallback the site rendered in while the design
+   system shipped unusable EOT font files.) The <br> is dropped below 700px,
+   where max-width:none takes over, so this only affects desktop. */
+.hero__lede{margin:26px 0 0;max-width:29.5em;
   font-size:clamp(16px,calc(25px + var(--grow0)*.016),40px);
   line-height:var(--leading-normal);color:var(--ink-200)}
 
@@ -541,7 +547,12 @@ a.btn{border-bottom:1px solid transparent}
    "View publication" instead of leaving a gap sized by the image's own
    natural proportions. */
 .pub img{width:150px;height:100%;object-fit:cover;border-radius:var(--radius-xs);box-shadow:var(--shadow-sm)}
-.pub h3{margin:12px 0 0;max-width:32ch;
+/* 36ch, not 32: ch is the width of "0" in the *current* font, so switching
+   from the Times fallback to real Cardo re-scaled this measure and pushed the
+   PhD title onto a third line, breaking its alignment with the cover. That
+   title needs 32.9ch bare minimum, and wrapping happens at word boundaries,
+   so 36ch gives it the headroom to hold two lines. */
+.pub h3{margin:12px 0 0;max-width:36ch;
   font:var(--weight-regular) clamp(26px,calc(32px + var(--grow0)*.008),40px)/1.15 var(--font-display);
   letter-spacing:var(--tracking-display);color:var(--ink-900);text-wrap:pretty}
 .pub__venue{margin-top:14px;font:var(--weight-light) 14px/1.6 var(--font-ui);color:var(--ink-600)}
