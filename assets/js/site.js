@@ -126,19 +126,13 @@ document.documentElement.classList.add('js-reveal');
   var mq = window.matchMedia('(max-width:700px)');
   var shown = STEP;
 
-  // Desktop shows a fixed run of posts ending at "Failure as compost...",
-  // leaving the rest of the box's height (set by the sync script below) as
-  // plain white space rather than scrolling or listing all 18.
-  var CUTOFF_INDEX = posts.findIndex(function (p) {
-    var t = p.querySelector('.post__title');
-    return t && t.textContent.indexOf('Failure as compost') !== -1;
-  });
-
   function render() {
     if (!mq.matches) {
-      posts.forEach(function (p, i) {
-        p.hidden = CUTOFF_INDEX >= 0 && i > CUTOFF_INDEX;
-      });
+      // Desktop: every post stays in the DOM so the box scrolls to reveal
+      // them. The box's own height is set by the sync script below, and
+      // .archive__list carries overflow-y:auto, so the run past the fold
+      // is reachable by scrolling inside the box.
+      posts.forEach(function (p) { p.hidden = false; });
       wrap.hidden = true;
       count.textContent = TOTAL + ' posts';
       return;
@@ -209,9 +203,10 @@ document.documentElement.classList.add('js-reveal');
     var top = list.getBoundingClientRect().top;
     var bottom = reports.getBoundingClientRect().bottom - GAP;
     var h = Math.round(bottom - top);
-    // A fixed height (not max-height) so the box still reaches the target
-    // bottom even though only 6 posts render — the leftover space below
-    // "Failure as compost..." shows as plain white space, per the brief.
+    // A fixed height (not max-height): the full run of posts is taller than
+    // this, so pinning the height is what gives .archive__list's
+    // overflow-y:auto something to scroll, while still landing the box's
+    // bottom on the target.
     if (h > 100) list.style.height = h + 'px';
   }
 
