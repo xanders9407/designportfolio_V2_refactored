@@ -28,39 +28,94 @@ document.documentElement.classList.add('js-reveal');
   setTimeout(function () { nodes.forEach(show); }, 2500);
 })();
 
-/* Menu — each instance owns its own open state (brief §4.1). */
+/* Menu — each instance owns its own open state (brief §4.1).
+   Desktop: a dropdown under the pill. Mobile (≤700px): a glass bar pinned to
+   the top, opening a navy drawer that slides in from the left. */
 (function () {
+  var mobile = window.matchMedia('(max-width:700px)');
+
   document.querySelectorAll('[data-menu]').forEach(function (menu) {
     var button = menu.querySelector('[data-menu-button]');
     var panel = menu.querySelector('[data-menu-panel]');
     var links = Array.prototype.slice.call(panel.querySelectorAll('a'));
+    var hideTimer;
+
+    // The list is wrapped in a "sheet" that carries the drawer's close
+    // button and title, so all three slide in as one. On desktop the sheet
+    // is display:contents and the close/title are hidden, leaving the
+    // dropdown exactly as before. `hidden` moves from the list to the sheet.
+    var sheet = document.createElement('div');
+    sheet.className = 'menu__sheet';
+    sheet.hidden = true;
+    sheet.innerHTML =
+      '<button type="button" class="menu__close" aria-label="Close menu"></button>' +
+      '<div class="menu__head">' +
+        '<p class="eyebrow eyebrow--brass">Xander Stegehuis, PhD</p>' +
+        '<p class="menu__title">Design portfolio</p>' +
+      '</div>';
+    var close = sheet.querySelector('.menu__close');
+    menu.insertBefore(sheet, panel);
+    sheet.appendChild(panel);
+    panel.hidden = false;
+
+    // Dims the page behind the drawer. It sits inside .menu, so the
+    // outside-click handler ignores it; it closes on click (not pointerdown)
+    // so the tap can't fall through to a page link once it stops catching
+    // pointer events.
+    var scrim = document.createElement('div');
+    scrim.className = 'menu__scrim';
+    scrim.setAttribute('aria-hidden', 'true');
+    menu.insertBefore(scrim, sheet);
+
+    scrim.addEventListener('click', function () { setOpen(false); });
+    close.addEventListener('click', function () { setOpen(false); button.focus(); });
+
+    function isOpen() { return menu.classList.contains('is-open'); }
 
     function setOpen(open, focusTarget) {
-      panel.hidden = !open;
+      clearTimeout(hideTimer);
       button.setAttribute('aria-expanded', String(open));
       if (open) {
+        sheet.hidden = false;
+        void sheet.offsetWidth; // commit the off-screen position so the slide runs
+        menu.classList.add('is-open');
+        document.documentElement.classList.toggle('menu-open', mobile.matches);
         document.addEventListener('pointerdown', onOutside, true);
         (focusTarget || links[0]).focus();
       } else {
+        menu.classList.remove('is-open');
+        document.documentElement.classList.remove('menu-open');
         document.removeEventListener('pointerdown', onOutside, true);
+        // Re-hide once the drawer has slid out (instant on desktop, where
+        // nothing transitions).
+        var ms = mobile.matches
+          ? parseFloat(getComputedStyle(sheet).transitionDuration) * 1000 || 0 : 0;
+        if (ms) hideTimer = setTimeout(function () { sheet.hidden = true; }, ms);
+        else sheet.hidden = true;
       }
     }
+
+    // Crossing the breakpoint with the menu open would leave the wrong
+    // presentation (and the scroll lock) behind.
+    mobile.addEventListener('change', function () {
+      if (isOpen()) setOpen(false);
+    });
 
     function onOutside(e) {
       if (!menu.contains(e.target)) setOpen(false);
     }
 
     button.addEventListener('click', function () {
-      setOpen(panel.hidden);
+      setOpen(!isOpen());
     });
 
     menu.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && !panel.hidden) {
+      if (e.key === 'Escape' && isOpen()) {
         setOpen(false);
         button.focus();
         return;
       }
-      if (panel.hidden) return;
+      if (!isOpen()) return;
 
       var i = links.indexOf(document.activeElement);
       if (e.key === 'ArrowDown') {
@@ -70,10 +125,55 @@ document.documentElement.classList.add('js-reveal');
         e.preventDefault();
         links[i <= 0 ? links.length - 1 : i - 1].focus();
       } else if (e.key === 'Tab') {
-        // Keep focus inside the open panel, then restore it to the button.
-        if (e.shiftKey && i === 0) { e.preventDefault(); links[links.length - 1].focus(); }
-        else if (!e.shiftKey && i === links.length - 1) { e.preventDefault(); links[0].focus(); }
+        // Keep focus inside the open panel (plus the drawer's close button
+        // on mobile), then restore it to the button.
+        var ring = mobile.matches ? [close].concat(links) : links;
+        var j = ring.indexOf(document.activeElement);
+        if (e.shiftKey && j <= 0) { e.preventDefault(); ring[ring.length - 1].focus(); }
+        else if (!e.shiftKey && j === ring.length - 1) { e.preventDefault(); ring[0].focus(); }
       }
+    });
+  });
+
+  /* The mobile bar is clear glass, so its label has to follow what's under
+     it: white over navy and photos, ink over sand and white. Checked at the
+     bar's vertical centre on every scroll frame. */
+  var bar = document.querySelector('.menu--floating');
+  if (!bar) return;
+  var DARK = '.hero__main,.masthead,.xs-dark,.contact__figure,.approach__figure,.cs-photo';
+  var darks = Array.prototype.slice.call(document.querySelectorAll(DARK));
+  var queued = false;
+
+  function tone() {
+    queued = false;
+    if (!mobile.matches) { bar.classList.remove('menu--onLight'); return; }
+    var y = bar.getBoundingClientRect().height / 2;
+    var dark = darks.some(function (el) {
+      var r = el.getBoundingClientRect();
+      return r.top <= y && r.bottom > y;
+    });
+    bar.classList.toggle('menu--onLight', !dark);
+  }
+  function queue() { if (!queued) { queued = true; requestAnimationFrame(tone); } }
+
+  window.addEventListener('scroll', queue, { passive: true });
+  window.addEventListener('resize', queue);
+  mobile.addEventListener('change', queue);
+  tone();
+})();
+
+/* Industry cards (Home): on touch screens there's no hover to flip them, so
+   the first tap flips a card to its logos and a second tap follows its link
+   to the case study. Tapping another card turns the previous one back. */
+(function () {
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.ind-card'));
+  if (!cards.length) return;
+  var touch = window.matchMedia('(hover:none)');
+  cards.forEach(function (card) {
+    card.addEventListener('click', function (e) {
+      if (!touch.matches || card.classList.contains('is-flipped')) return;
+      e.preventDefault();
+      cards.forEach(function (c) { c.classList.toggle('is-flipped', c === card); });
     });
   });
 })();
@@ -97,6 +197,13 @@ document.documentElement.classList.add('js-reveal');
   tabs.forEach(function (tab) {
     tab.addEventListener('click', function () { select(tab); });
   });
+
+  // Deep links from the Home industry cards (portfolio.html?case=3) open
+  // that case study with the page at the top. A query, not a #hash, so the
+  // browser never jumps partway down the page to an anchor.
+  var n = new URLSearchParams(location.search).get('case');
+  var deep = n && tabs.filter(function (t) { return t.getAttribute('aria-controls') === 'cs' + n; })[0];
+  if (deep) select(deep);
 
   list.addEventListener('keydown', function (e) {
     var i = tabs.indexOf(document.activeElement);

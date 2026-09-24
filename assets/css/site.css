@@ -87,10 +87,47 @@ img{display:block;max-width:100%}
   font-size:var(--text-md);letter-spacing:var(--tracking-tight);line-height:1;white-space:nowrap;
   border:1px solid transparent;border-radius:var(--radius-md);cursor:pointer;
   transition:var(--transition-control)}
-.btn:active{transform:scale(.972)}
-.btn--brand{background:var(--action-brand-bg);color:var(--action-brand-fg)}
-.btn--brand:hover{background:var(--action-brand-bg-hover);color:var(--action-brand-fg)}
 a.btn{border-bottom:1px solid transparent}
+
+/* Depth through colour, not shadow: every face is a vertical gradient (lit
+   top, deeper bottom) with a one-pixel lighter top edge and darker bottom
+   edge drawn inside the button. Hover shifts the whole face a step lighter;
+   press inverts the gradient so it reads as pushed in. Each variant sets
+   only its colours. */
+.btn,.archive__more-btn{
+  background:linear-gradient(180deg,var(--face-top) 0%,var(--face-bottom) 100%);
+  box-shadow:inset 0 1px 0 var(--edge-top),inset 0 -1px 0 var(--edge-bottom);
+  transition:background-color var(--duration-base) var(--ease-standard),
+    color var(--duration-base) var(--ease-standard),filter var(--duration-base) var(--ease-standard)}
+.btn:hover,.archive__more-btn:hover{
+  background:linear-gradient(180deg,var(--hover-top) 0%,var(--hover-bottom) 100%)}
+.btn:active,.archive__more-btn:active{
+  background:linear-gradient(0deg,var(--face-top) 0%,var(--face-bottom) 100%);
+  box-shadow:inset 0 1px 2px var(--edge-bottom)}
+.btn:focus-visible,.archive__more-btn:focus-visible{
+  box-shadow:var(--ring-focus),inset 0 1px 0 var(--edge-top)}
+
+/* Teal — the primary action ("Get in touch"). */
+.btn--brand,.btn--brand:hover{color:var(--action-brand-fg)}
+.btn--brand{--face-top:#9BE5E6;--face-bottom:var(--teal-500);
+  --hover-top:var(--teal-300);--hover-bottom:#7AD3DC;
+  --edge-top:rgba(255,255,255,.6);--edge-bottom:var(--teal-700)}
+/* Navy — for light backgrounds. */
+.btn--navy,.btn--navy:hover{color:var(--paper-000)}
+.btn--navy{--face-top:#3A5A73;--face-bottom:var(--ink-800);
+  --hover-top:#4A6D88;--hover-bottom:#26394A;
+  --edge-top:rgba(255,255,255,.22);--edge-bottom:var(--ink-1000)}
+/* Glass — for navy backgrounds: a lit, translucent white. */
+.btn--glass,.btn--glass:hover{color:var(--paper-000)}
+.btn--glass{--face-top:rgba(255,255,255,.17);--face-bottom:rgba(255,255,255,.05);
+  --hover-top:rgba(255,255,255,.26);--hover-bottom:rgba(255,255,255,.11);
+  --edge-top:rgba(255,255,255,.3);--edge-bottom:rgba(0,0,0,.35)}
+
+/* Section call-to-action: sits under a band's content, arrow nudges on hover. */
+.btn--section{margin-top:36px;height:52px;padding:0 26px}
+.btn__arrow{color:var(--teal-400);transition:transform var(--duration-fast) var(--ease-standard)}
+.btn:hover .btn__arrow{transform:translateX(3px)}
+.btn--glass .btn__arrow{color:var(--teal-400)}
 
 /* --- Menu ---------------------------------------------------------------- */
 
@@ -156,7 +193,10 @@ a.btn{border-bottom:1px solid transparent}
    fitted the Times/system fallback the site rendered in while the design
    system shipped unusable EOT font files.) The <br> is dropped below 700px,
    where max-width:none takes over, so this only affects desktop. */
-.hero__lede{margin:26px 0 0;max-width:29.5em;
+/* Centred in the free space between the title and the portrait row: auto
+   margins above and below split it evenly; the symmetric padding keeps a
+   26px minimum gap on each side without shifting the centre. */
+.hero__lede{margin:auto 0;padding:26px 0;max-width:29.5em;
   font-size:clamp(16px,calc(25px + var(--grow0)*.016),40px);
   line-height:var(--leading-normal);color:var(--ink-200)}
 
@@ -165,7 +205,10 @@ a.btn{border-bottom:1px solid transparent}
    fixed value — nothing changes there. Only once the viewport is taller than
    that does a share of the extra room grow the portrait, name and figures,
    so a tall screen fills with bigger content instead of pure gap. */
-.hero__identity{display:flex;align-items:center;gap:var(--space-8);margin:auto 0}
+/* Sits at the foot of the column (the lede's auto margins push it down):
+   the text column's bottom padding and the sand panel's bottom margin are
+   both --hero-inset, so the portrait's lower edge lines up with the panel's. */
+.hero__identity{display:flex;align-items:center;gap:var(--space-8);margin:0}
 .hero__portrait{width:clamp(168px,max(calc(168px + (100vh - 900px)*.3),calc(168px + var(--grow0)*.106)),270px);
   height:clamp(168px,max(calc(168px + (100vh - 900px)*.3),calc(168px + var(--grow0)*.106)),270px);
   flex:none;object-fit:cover;object-position:50% 22%;border-radius:var(--radius-pill)}
@@ -178,35 +221,6 @@ a.btn{border-bottom:1px solid transparent}
 .hero__meta a{color:inherit;border-bottom-color:var(--ink-500)}
 .hero__meta a:hover{color:var(--paper-000);border-bottom-color:var(--teal-400)}
 
-/* Sized to its content rather than stretched to the column width — the pill
-   reads as a compact control, not a bar spanning the full measure. */
-/* Vertical padding is deliberately restrained (16px, not scaling) and the
-   link font-size below has a low ceiling — a nav pill should stay a thin,
-   wide capsule at any screen size, not swell into a tall oval as things
-   scale up. flex-wrap:nowrap — width:fit-content + wrap is an intrinsic-sizing
-   edge case some browsers get wrong, wrapping to an awkward 3-then-1 split
-   in the ~1090–1140px band even though the content comfortably fits on one
-   line there (measured 100px+ to spare at the tightest point). Desktop never
-   needs to wrap; mobile re-enables it deliberately below. */
-.hero__cta{display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;
-  gap:12px 32px;align-self:flex-start;width:fit-content;
-  margin:0;padding:12px 30px;background:var(--sand-050);
-  border-radius:var(--radius-pill);box-shadow:var(--shadow-lg);list-style:none}
-/* Underline is a ::after, not border-bottom — its width can move independently
-   of the full-width text box. border-bottom:none cancels the DS base a{}
-   underline (which darkens toward near-black on hover) so only this line shows.
-   On hover it goes shorter and fatter — width shrinks in as it thickens. */
-.hero__cta a{position:relative;display:inline-block;flex-shrink:0;font-family:var(--font-ui);
-  font-weight:var(--weight-bold);font-size:clamp(14px,calc(14px + var(--grow0)*.003),19px);
-  color:var(--ink-700);padding-bottom:5px;white-space:nowrap;
-  border-bottom:none;transition:color var(--duration-fast) var(--ease-standard)}
-.hero__cta a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
-  background:var(--teal-500);
-  transition:height var(--duration-fast) var(--ease-standard),
-    left var(--duration-fast) var(--ease-standard),
-    right var(--duration-fast) var(--ease-standard)}
-.hero__cta a:hover{color:var(--ink-900)}
-.hero__cta a:hover::after{height:4px;left:22%;right:22%}
 
 /* The 120px arc: warm sand against navy, used exactly once on the site.
    Arc and its clearance scale above 1440 so the curve keeps its proportion. */
@@ -310,15 +324,52 @@ a.btn{border-bottom:1px solid transparent}
    its last hairline and this band exactly, not just approximately. */
 .industries{padding:88px var(--pad-x) var(--band-y)}
 .industries .band__title--sub{margin-bottom:44px}
-.industries__grid{display:grid;grid-template-columns:repeat(5,1fr);
-  border-top:1px solid var(--border-inverse);border-bottom:1px solid var(--border-inverse)}
-.industries__cell{display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:36px var(--space-5);border-right:1px solid var(--border-inverse)}
-.industries__cell:last-child{border-right:0}
-.industries__name{font:var(--weight-regular) clamp(19px,calc(22px + var(--grow0)*.0125),34px)/1.15 var(--font-display);
+.industries__name{display:block;font:var(--weight-regular) clamp(21px,calc(24px + var(--grow0)*.0125),36px)/1.15 var(--font-display);
   color:var(--paper-000)}
-.industries__focus{margin-top:var(--space-2);font:var(--weight-light) var(--text-2xs)/1.55 var(--font-ui);
-  color:var(--ink-300)}
+
+/* Industry cards — navy front (same as the band, lifted only by a small
+   shadow and hairline), flipping on hover to a sand back with the logos of
+   the organisations worked with. Whole card links to its case study.
+   Same flip mechanics as the About traits: hover is read off the static
+   <a>, the transform lives on the inner element. On touch (no hover), the
+   first tap flips and the second follows the link (site.js). */
+.industries__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-5);
+  --card-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 2px 4px rgba(0,0,0,.45),
+    0 22px 40px -12px rgba(0,0,0,.8),0 0 0 1px rgba(0,0,0,.25)}
+.ind-card{display:block;height:clamp(230px,calc(250px + var(--grow0)*.06),360px);
+  perspective:1000px;border-bottom:0;color:inherit}
+.ind-card:focus-visible{box-shadow:none}
+.ind-card{--duration-card:820ms}
+/* pointer-events:none: the turning layer never counts as hovered — only the
+   <a>'s own fixed box does. Otherwise, mid-turn, perspective swells the near
+   edge past the card's outline, so a cursor resting near the border keeps
+   gaining and losing hover and the card stutters. */
+.ind-card__inner{position:relative;display:block;width:100%;height:100%;pointer-events:none;
+  transform-style:preserve-3d;transition:transform var(--duration-card) var(--ease-out)}
+@media (prefers-reduced-motion:reduce){.ind-card{--duration-card:0ms}}
+@media (hover:hover){.ind-card:hover .ind-card__inner{transform:rotateY(180deg) translateY(-3px)}}
+.ind-card:focus-visible .ind-card__inner,
+.ind-card.is-flipped .ind-card__inner{transform:rotateY(180deg) translateY(-3px)}
+.ind-card:focus-visible .ind-card__face{box-shadow:var(--ring-focus-dark)}
+.ind-card__face{position:absolute;inset:0;display:flex;flex-direction:column;border-radius:12px;
+  overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.ind-card__front{align-items:center;justify-content:center;text-align:center;padding:28px 22px;
+  /* Same colours as the Publications (.btn--glass) button — its translucent
+     white gradient, flattened onto the navy as solid colours so nothing of
+     the turning card shows through mid-flip. */
+  background:linear-gradient(180deg,#39434A 0%,#1C2730 100%);
+  border:1px solid rgba(255,255,255,.12);box-shadow:var(--card-shadow)}
+.ind-card__back{transform:rotateY(180deg);padding:22px 20px 18px;background:var(--sand-050);
+  box-shadow:var(--card-shadow)}
+.ind-card__logos{flex:1;display:flex;flex-wrap:wrap;align-items:center;align-content:center;
+  justify-content:center;gap:14px 18px}
+.ind-card__logos img{width:auto;height:auto;max-width:42%;max-height:46px;object-fit:contain}
+.ind-card__logos--1 img{max-width:78%;max-height:60px}
+.ind-card__logos--5 img{max-width:28%;max-height:36px}
+.ind-card__cta{display:block;padding-top:12px;border-top:1px solid var(--sand-200);text-align:center;
+  font:var(--weight-bold) var(--text-2xs)/1 var(--font-ui);letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-700)}
+
 
 /* --- Footer -------------------------------------------------------------- */
 
@@ -339,6 +390,7 @@ a.btn{border-bottom:1px solid transparent}
 .site-footer__meta a{color:inherit;border-bottom-color:var(--ink-500)}
 .site-footer__meta a:hover{color:var(--paper-000);border-bottom-color:var(--teal-400)}
 .site-footer__legal{margin-top:var(--space-5);font-size:var(--text-2xs);color:var(--ink-400)}
+.site-footer__actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:var(--space-3)}
 
 /* --- Scroll reveal ------------------------------------------------------- */
 
@@ -418,7 +470,11 @@ a.btn{border-bottom:1px solid transparent}
   line-height:1.75;color:var(--ink-700)}
 
 /* Personality — pure CSS flip, no JS state (an earlier JS version lagged). */
-.traits{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--space-3);margin-top:var(--space-4)}
+.traits{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--space-3);margin-top:var(--space-4);
+  /* The industry cards' layered shadow, retuned for a light page: lit top
+     edge, tight contact shadow, soft wide drop. */
+  --trait-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 1px 2px rgba(16,28,37,.1),
+    0 16px 30px -12px rgba(16,28,37,.32)}
 /* Hover is read off .flip (never transforms) rather than .flip__inner (which
    does) — driving :hover from the rotating element itself makes its own
    hit-tested area foreshorten and shift as it turns, so near the edges the
@@ -433,16 +489,13 @@ a.btn{border-bottom:1px solid transparent}
   backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .flip__front{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-3);
   text-align:center;padding:18px 14px;background:var(--paper-000);
-  border:1px solid var(--border-default);box-shadow:var(--shadow-xs);overflow:hidden}
-/* Affordance is visual only — a folded corner, never a "hover" label. */
-.flip__front::after{content:"";position:absolute;top:0;right:0;width:26px;height:26px;
-  background:linear-gradient(225deg,var(--teal-500) 0 50%,transparent 50%)}
+  border:1px solid var(--border-default);box-shadow:var(--trait-shadow);overflow:hidden}
 .flip__num{font:var(--weight-regular) 15px var(--font-display);letter-spacing:.06em;color:var(--brass-500)}
 .flip__rule{width:20px;height:1px;background:var(--brass-500)}
 .flip__trait{font:var(--weight-regular) 19px/1.15 var(--font-display);
   letter-spacing:var(--tracking-tight);color:var(--ink-900)}
 .flip__back{transform:rotateY(180deg);display:flex;align-items:center;padding:var(--space-4) 14px;
-  background:var(--ink-800)}
+  background:var(--ink-800);box-shadow:var(--trait-shadow)}
 .flip__back p{margin:0;font-size:var(--text-2xs);line-height:var(--leading-normal);color:var(--ink-100)}
 
 .principles{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-8);margin-top:18px}
@@ -602,11 +655,12 @@ a.btn{border-bottom:1px solid transparent}
 .archive__more{padding:18px var(--space-5) 26px}
 .archive__more[hidden]{display:none}
 .archive__more-btn{display:flex;align-items:center;justify-content:center;gap:var(--space-2);
-  width:100%;padding:13px 18px;background:transparent;border:1px solid var(--ink-200);
+  width:100%;padding:13px 18px;border:1px solid var(--ink-200);
   border-radius:var(--radius-md);cursor:pointer;
   font:var(--weight-bold) 12.5px var(--font-ui);color:var(--ink-900);
-  transition:background-color var(--duration-fast) var(--ease-standard)}
-.archive__more-btn:hover{background:var(--sand-100)}
+  --face-top:var(--paper-000);--face-bottom:var(--sand-100);
+  --hover-top:var(--paper-000);--hover-bottom:var(--sand-050);
+  --edge-top:rgba(255,255,255,1);--edge-bottom:var(--sand-200)}
 
 /* ==========================================================================
    Contact — the one page with no navy masthead
@@ -668,8 +722,8 @@ a.btn{border-bottom:1px solid transparent}
   .stats__row{flex:none;justify-content:flex-start;padding:0}
   .stats__row+.stats__row{margin-top:11px;padding-top:11px}
   /* Stacked: no free space for the auto margins to share, so space explicitly. */
+  .hero__lede{margin:26px 0 0;padding:0}
   .hero__identity{margin:44px 0 0}
-  .hero__cta{margin:44px 0 0}
   .approach{grid-template-columns:1fr}
   .approach__text{padding:72px var(--pad-x)}
   /* Stacked here (grid-template-columns:1fr above), so the figure jumps
@@ -685,9 +739,6 @@ a.btn{border-bottom:1px solid transparent}
      the rarer case. */
   .approach__figure{min-height:clamp(360px,min(122vw,88vh),1400px)}
   .industries__grid{grid-template-columns:repeat(2,1fr)}
-  .industries__cell{border-right:1px solid var(--border-inverse);
-    border-bottom:1px solid var(--border-inverse)}
-  .industries__cell:nth-child(2n){border-right:0}
 
   .about{grid-template-columns:1fr}
   .rail{border-right:0;border-bottom:1px solid var(--sand-200);
@@ -727,7 +778,6 @@ a.btn{border-bottom:1px solid transparent}
   .band__title--lead,.band__title--sub{font-size:30px;max-width:none}
   .cs-panel__title{font-size:31px}
   .glance__num{font-size:38px}
-  .pub h3{font-size:26px}
   .contact__title{font-size:40px}
   .contact__quote blockquote{font-size:26px}
   .expertise__row h3{font-size:28px}
@@ -738,7 +788,10 @@ a.btn{border-bottom:1px solid transparent}
   .hero__main{padding:86px var(--gutter) 26px}
   .hero__identity{margin:34px 0 0;gap:20px}
   .hero__portrait{width:120px;height:120px}
-  .hero__name{font-size:23px}
+  /* One line, always: the name (with ", PhD") renders ~9.9× its font size
+     wide, so the size follows the room left beside the portrait —
+     viewport minus gutters (44), portrait (120) and gap (20) — capped at 23px. */
+  .hero__name{font-size:min(23px,calc((100vw - 184px)/10.2));white-space:nowrap}
   .hero__meta{margin-top:8px;font-size:13.5px}
   .hero__stats{padding:44px var(--gutter)}
   .stats__figure{font-size:50px}
@@ -746,13 +799,6 @@ a.btn{border-bottom:1px solid transparent}
   /* §13.1 — the 120px arc reads as a mistake at this width. */
   .hero__stats{border-radius:0}
 
-  /* Four CTAs wrap to two lines rather than scrolling sideways (§13.1) —
-     re-enables wrap, which the desktop rule above turns off. Slimmer than
-     desktop: smaller text and tighter padding so the pill reads as a thin
-     band, not a fat oval, at this width. */
-  .hero__cta{flex-wrap:wrap;align-self:center;max-width:100%;justify-content:center;
-    gap:8px 16px;padding:12px 22px}
-  .hero__cta a{font-size:13.5px;padding-bottom:4px}
 
   .help-grid{grid-template-columns:1fr;gap:26px}
   .approach__text{padding:40px var(--gutter)}
@@ -762,16 +808,17 @@ a.btn{border-bottom:1px solid transparent}
   .approach__figure img{object-position:50% 50%}
   .expertise__row{grid-template-columns:1fr;gap:10px;padding:32px 0}
 
-  /* Vertical dividers become horizontal (§13.1). */
-  .industries__grid{grid-template-columns:1fr}
-  .industries__cell{border-right:0;border-bottom:1px solid var(--border-inverse);
-    padding:36px 20px}
-  .industries__cell:last-child{border-bottom:0}
+  /* Industry cards stack one per row. */
+  .industries__grid{grid-template-columns:1fr;gap:14px}
+  .ind-card{height:200px}
 
   /* Footer stacks centred, button last; the closer row (§13.1) stays
      left-aligned — it's a "want the longer version" prompt, not a sign-off. */
   .site-footer{flex-direction:column;align-items:center;text-align:center;
     gap:22px;padding:40px var(--pad-x)}
+  /* Mobile keeps only "Get in touch" — the other pages are a tap away in the menu. */
+  .site-footer__actions{justify-content:center}
+  .site-footer__actions .btn:not(.btn--brand){display:none}
   .closer{flex-direction:column;align-items:flex-start;gap:22px}
 
   /* About — rail content first, then the single column (§13.3). */
@@ -798,8 +845,16 @@ a.btn{border-bottom:1px solid transparent}
      the list paginates instead, via .archive__more. */
   .archive__list{max-height:none;overflow:visible}
   .pubs__main{padding:32px var(--gutter) 40px}
-  .pub{grid-template-columns:96px 1fr;gap:18px}
-  .pub img{width:96px}
+  /* Compact, side by side at every phone width. The cover keeps its own
+     shape (height:auto) — the desktop rule stretches it to the text's
+     height and crops it with object-fit:cover, which cut the covers' edges
+     off here. */
+  .pub{grid-template-columns:84px 1fr;gap:16px;padding:26px 0}
+  .pub img{width:84px;height:auto;align-self:start;object-fit:contain}
+  .pub .eyebrow{font-size:10.5px}
+  .pub h3{margin-top:8px;font-size:22px;line-height:1.15}
+  .pub__venue{margin-top:10px;font-size:13px;line-height:1.5}
+  .pub__link{margin-top:12px}
 
   /* Contact — vertical split; the photo needs an explicit height now that it
      has no full-height column to fill (§13.3). */
@@ -808,6 +863,78 @@ a.btn{border-bottom:1px solid transparent}
   .contact__quote{left:var(--gutter);right:var(--gutter);top:74px}
   .contact__value{font-size:22px}
   .contact__row{padding:22px 0}
+}
+
+/* --- Mobile menu: sticky glass bar + slide-in drawer ---------------------
+   Same markup as the desktop dropdown on every page; site.js wraps the list
+   in .menu__sheet with a close button and title. The bar's blur lives on
+   ::before, NOT on .menu itself — a backdrop-filter on .menu would make it
+   the containing block for the position:fixed drawer and scrim, trapping
+   them inside the bar.
+   ------------------------------------------------------------------------ */
+
+.menu__sheet{display:contents}
+.menu__sheet[hidden]{display:none}
+.menu__scrim,.menu__close,.menu__head{display:none}
+
+@media (max-width:700px){
+  .menu--floating,.hero .menu--floating{position:fixed;top:0;left:0;right:0;z-index:50;
+    height:52px;display:flex;align-items:center;padding:0 var(--gutter)}
+  /* Clear glass, iOS-style. Over navy it's pure blur — no tint, no edge,
+     no saturation boost (which would shift the navy) — so blurred navy is
+     just navy and the bar vanishes; only content passing under it shows. */
+  .menu--floating::before{content:"";position:absolute;inset:0;z-index:-1;
+    background:transparent;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+    transition:background-color var(--duration-base) var(--ease-standard)}
+  /* Over light sections (toggled by site.js) a faint white frost keeps the
+     ink label legible over text. */
+  .menu--onLight::before{background:rgba(255,255,255,.45)}
+  .menu--onLight .menu__button{color:var(--ink-900)}
+
+  .menu__button,.menu__button--onPhoto{padding:8px 0;background:none;border:0;
+    border-radius:0;-webkit-backdrop-filter:none;backdrop-filter:none;
+    transition:color var(--duration-base) var(--ease-standard)}
+  .menu__button:hover,.menu__button--onPhoto:hover{background:none}
+  .menu__bars{gap:4px}
+  .menu__bars span{width:16px;height:1.5px}
+
+  .menu__scrim{display:block;position:fixed;inset:0;z-index:1;
+    background:rgba(11,20,27,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+    opacity:0;visibility:hidden;
+    transition:opacity var(--duration-slow) var(--ease-standard),visibility 0s linear var(--duration-slow)}
+  .menu.is-open .menu__scrim{opacity:1;visibility:visible;
+    transition:opacity var(--duration-slow) var(--ease-standard)}
+
+  /* Kept rendered while closed (see site.js) so the slide can animate out;
+     `hidden` is only re-applied once the transition has finished. */
+  .menu__sheet{display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:2;
+    width:min(70vw,280px);overflow-y:auto;padding:12px 0 var(--space-8);
+    background:var(--ink-900);box-shadow:var(--shadow-lg);
+    transform:translateX(-100%);transition:transform var(--duration-slow) var(--ease-out)}
+  .menu__sheet[hidden]{display:none}
+  .menu.is-open .menu__sheet{transform:none}
+
+  .menu__close{display:flex;align-items:center;justify-content:center;position:relative;
+    align-self:flex-start;margin-left:calc(var(--gutter) - 10px);width:40px;height:40px;padding:0;
+    background:none;border:0;color:var(--paper-000);cursor:pointer}
+  .menu__close::before,.menu__close::after{content:"";position:absolute;width:16px;height:1.5px;
+    background:currentColor;transform:rotate(45deg)}
+  .menu__close::after{transform:rotate(-45deg)}
+
+  .menu__head{display:block;margin:28px var(--gutter) 26px}
+  .menu__title{margin:10px 0 0;font:var(--weight-regular) 30px/1.1 var(--font-display);
+    color:var(--paper-000)}
+
+  .menu__panel{position:static;min-width:0;margin:0;padding:0;
+    background:none;border-radius:0;box-shadow:none}
+  .menu__panel a{padding:10px var(--gutter);font-family:var(--font-ui);
+    font-size:16px;line-height:1.3;color:var(--ink-200)}
+  .menu__panel a:hover{background:rgba(255,255,255,.05);color:var(--paper-000)}
+  .menu__panel a[aria-current="page"]{font-weight:var(--weight-bold);color:var(--paper-000);
+    box-shadow:inset 3px 0 0 var(--teal-400)}
+
+  /* Stop the page scrolling behind the open drawer. */
+  html.menu-open,html.menu-open body{overflow:hidden}
 }
 
 /* --- Below the designed width (390px) -----------------------------------
@@ -819,10 +946,10 @@ a.btn{border-bottom:1px solid transparent}
 @media (max-width:400px){
   .hero__identity{gap:14px}
   .hero__portrait{width:96px;height:96px}
+  .hero__name{font-size:min(23px,calc((100vw - 154px)/10.2))} /* portrait 96, gap 14 */
   /* Let the long tokens break rather than push the layout wider. */
   .hero__meta,.field__value,.contact__value,.pub h3,.post__title,
   .glance__value,.rail__quote{overflow-wrap:anywhere}
   .tools__grid{grid-template-columns:1fr}
   .traits{grid-template-columns:1fr}
-  .pub{grid-template-columns:1fr;gap:14px}
 }
