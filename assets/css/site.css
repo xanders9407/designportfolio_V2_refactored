@@ -359,6 +359,20 @@ a.btn{border-bottom:1px solid transparent}
      the turning card shows through mid-flip. */
   background:linear-gradient(180deg,#39434A 0%,#1C2730 100%);
   border:1px solid rgba(255,255,255,.12);box-shadow:var(--card-shadow)}
+/* Blurred photo behind the title (blur is baked into the files), under a
+   navy veil so the white title stands out; the text shadow lifts it
+   further off the image. */
+.ind-card__bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ind-card__front::before{content:"";position:absolute;inset:0;z-index:1;
+  /* An extra pool of navy right behind the title (the ellipse), on top of
+     an overall veil, so the photo recedes most exactly where the text sits. */
+  background:radial-gradient(ellipse 75% 45% at 50% 50%,rgba(16,28,37,.55) 0%,rgba(16,28,37,0) 100%),
+    linear-gradient(180deg,rgba(16,28,37,.5) 0%,rgba(16,28,37,.7) 100%)}
+/* Photos also slightly desaturated and dimmed, so their colours don't
+   compete with the white title. */
+.ind-card__bg{filter:saturate(.75) brightness(.9)}
+.ind-card__front .industries__name{position:relative;z-index:2;font-weight:var(--weight-bold);
+  text-shadow:0 1px 1px rgba(0,0,0,.45),0 2px 10px rgba(0,0,0,.55),0 0 28px rgba(0,0,0,.35)}
 .ind-card__back{transform:rotateY(180deg);padding:22px 20px 18px;background:var(--sand-050);
   box-shadow:var(--card-shadow)}
 .ind-card__logos{flex:1;display:flex;flex-wrap:wrap;align-items:center;align-content:center;
@@ -796,6 +810,9 @@ a.btn{border-bottom:1px solid transparent}
      viewport minus gutters (44), portrait (120) and gap (20) — capped at 23px. */
   .hero__name{font-size:min(23px,calc((100vw - 184px)/10.2));white-space:nowrap}
   .hero__meta{margin-top:8px;font-size:13.5px}
+  /* Location and email stack on their own lines here, so no separator dot. */
+  .hero__sep{display:none}
+  .hero__meta a{display:table}
   .hero__stats{padding:44px var(--gutter)}
   .stats__figure{font-size:50px}
   .stats__label{margin-top:8px}
@@ -812,8 +829,18 @@ a.btn{border-bottom:1px solid transparent}
   .expertise__row{grid-template-columns:1fr;gap:10px;padding:32px 0}
 
   /* Industry cards stack one per row. */
-  .industries__grid{grid-template-columns:1fr;gap:14px}
-  .ind-card{height:200px}
+  .industries__grid{grid-template-columns:1fr 1fr;gap:12px}
+  .ind-card{height:170px}
+  .ind-card .industries__name{font-size:19px}
+  .ind-card__front{padding:16px 12px}
+  /* Half-width backs: smaller logos and tighter spacing so even the
+     five-logo card fits. */
+  .ind-card__back{padding:14px 12px 12px}
+  .ind-card__logos{gap:8px 10px}
+  .ind-card__logos img{max-width:44%;max-height:26px}
+  .ind-card__logos--1 img{max-width:84%;max-height:34px}
+  .ind-card__logos--5 img{max-width:40%;max-height:20px}
+  .ind-card__cta{padding-top:9px;font-size:10px}
 
   /* Footer stacks centred, button last; the closer row (§13.1) stays
      left-aligned — it's a "want the longer version" prompt, not a sign-off. */
