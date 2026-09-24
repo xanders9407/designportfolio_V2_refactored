@@ -134,6 +134,45 @@ document.documentElement.classList.add('js-reveal');
       }
     });
   });
+
+  /* Mobile pill: light glass over light sections, dark over navy and photos.
+     Reads the page directly behind the pill's centre — elementsFromPoint
+     lists everything stacked at that point, so the pill (and the rest of
+     .menu) is skipped rather than hiding what's beneath it. */
+  var bar = document.querySelector('.menu--floating');
+  if (!bar) return;
+  var pill = bar.querySelector('[data-menu-button]');
+  var queued = false;
+
+  function isLightBehindPill() {
+    var r = pill.getBoundingClientRect();
+    var stack = document.elementsFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    for (var i = 0; i < stack.length; i++) {
+      var el = stack[i];
+      if (bar.contains(el)) continue;
+      for (; el && el !== document.documentElement; el = el.parentElement) {
+        if (/^(IMG|PICTURE|VIDEO)$/.test(el.tagName)) return false;
+        var m = getComputedStyle(el).backgroundColor.match(/[\d.]+/g);
+        if (m && (m.length < 4 || +m[3] > 0.5)) {
+          return 0.299 * m[0] + 0.587 * m[1] + 0.114 * m[2] > 140;
+        }
+      }
+      break;
+    }
+    return false;
+  }
+
+  function tone() {
+    queued = false;
+    bar.classList.toggle('menu--onLight', mobile.matches && isLightBehindPill());
+  }
+  function queue() { if (!queued) { queued = true; requestAnimationFrame(tone); } }
+
+  window.addEventListener('scroll', queue, { passive: true });
+  window.addEventListener('resize', queue);
+  window.addEventListener('load', queue);
+  mobile.addEventListener('change', queue);
+  tone();
 })();
 
 /* Industry cards (Home): on touch screens there's no hover to flip them, so

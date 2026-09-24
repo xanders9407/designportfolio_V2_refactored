@@ -643,7 +643,9 @@ a.btn{border-bottom:1px solid transparent}
 /* display:grid above would otherwise defeat the hidden attribute the
    pagination script sets. */
 .post[hidden]{display:none}
-.post:hover{background:var(--sand-100)}
+/* Only the background changes: the base a:hover rule would otherwise
+   darken the row's bottom divider (it's the link's own border). */
+.post:hover{background:var(--sand-100);border-bottom-color:var(--sand-200)}
 .post__title,.post__date{display:block}
 .post__title{font:var(--weight-regular) clamp(15.5px,calc(15.5px + var(--grow0)*.0012),17px)/1.4 var(--font-ui);
   color:var(--ink-900)}
@@ -883,14 +885,20 @@ a.btn{border-bottom:1px solid transparent}
   .menu--floating,.hero .menu--floating{position:fixed;top:14px;left:var(--gutter);right:auto;
     z-index:50;display:block;padding:0}
 
-  /* Floating glass pill — always dark frosted glass with a white label, so
-     it reads the same over navy, sand, white or photos without depending
-     on detecting what's underneath. Over navy it all but blends in. */
+  /* Floating glass pill. Dark frosted glass with a white label over navy
+     and photos; over light sections (.menu--onLight, set by site.js) it
+     turns to light frosted glass with an ink label. Dark is the default,
+     so if the check never runs the label is still readable on navy. */
   .menu__button,.menu__button--onPhoto{padding:9px 16px;border-radius:var(--radius-pill);
     color:var(--paper-000);background:rgba(22,36,47,.62);border:1px solid rgba(255,255,255,.16);
     -webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);
-    transition:background-color var(--duration-base) var(--ease-standard)}
+    transition:color var(--duration-base) var(--ease-standard),
+      background-color var(--duration-base) var(--ease-standard),
+      border-color var(--duration-base) var(--ease-standard)}
   .menu__button:hover,.menu__button--onPhoto:hover{background:rgba(22,36,47,.78)}
+  .menu--onLight .menu__button{color:var(--ink-900);background:rgba(255,255,255,.55);
+    border-color:rgba(16,28,37,.1)}
+  .menu--onLight .menu__button:hover{background:rgba(255,255,255,.75)}
 
   .menu__scrim{display:block;position:fixed;inset:0;z-index:1;
     background:rgba(11,20,27,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
