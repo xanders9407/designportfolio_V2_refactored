@@ -134,32 +134,6 @@ document.documentElement.classList.add('js-reveal');
       }
     });
   });
-
-  /* The mobile bar is clear glass, so its label has to follow what's under
-     it: white over navy and photos, ink over sand and white. Checked at the
-     bar's vertical centre on every scroll frame. */
-  var bar = document.querySelector('.menu--floating');
-  if (!bar) return;
-  var DARK = '.hero__main,.masthead,.xs-dark,.contact__figure,.approach__figure,.cs-photo';
-  var darks = Array.prototype.slice.call(document.querySelectorAll(DARK));
-  var queued = false;
-
-  function tone() {
-    queued = false;
-    if (!mobile.matches) { bar.classList.remove('menu--onLight'); return; }
-    var y = bar.getBoundingClientRect().height / 2;
-    var dark = darks.some(function (el) {
-      var r = el.getBoundingClientRect();
-      return r.top <= y && r.bottom > y;
-    });
-    bar.classList.toggle('menu--onLight', !dark);
-  }
-  function queue() { if (!queued) { queued = true; requestAnimationFrame(tone); } }
-
-  window.addEventListener('scroll', queue, { passive: true });
-  window.addEventListener('resize', queue);
-  mobile.addEventListener('change', queue);
-  tone();
 })();
 
 /* Industry cards (Home): on touch screens there's no hover to flip them, so

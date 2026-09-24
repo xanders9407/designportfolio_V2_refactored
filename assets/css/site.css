@@ -651,7 +651,7 @@ a.btn{border-bottom:1px solid transparent}
 .post__read{font:var(--weight-bold) var(--text-2xs) var(--font-ui);color:var(--teal-700);white-space:nowrap}
 
 /* Mobile pagination control for the posts archive (§13.3). Desktop shows all
-   18 in the scroll panel, so the script leaves this hidden there. */
+   posts in the scroll panel, so the script leaves this hidden there. */
 .archive__more{padding:18px var(--space-5) 26px}
 .archive__more[hidden]{display:none}
 .archive__more-btn{display:flex;align-items:center;justify-content:center;gap:var(--space-2);
@@ -765,7 +765,7 @@ a.btn{border-bottom:1px solid transparent}
 
 @media (max-width:700px){
   /* §13.1 vertical rhythm: mastheads 96→70, bands 88→40. */
-  .masthead{padding:70px var(--pad-x) 40px}
+  .masthead{padding:96px var(--pad-x) 40px}
   .band{padding:40px var(--pad-x)}
   .industries{padding:40px var(--pad-x)}
 
@@ -785,7 +785,8 @@ a.btn{border-bottom:1px solid transparent}
 
   /* Home hero — stacks; figures become a full-width band, arc removed. */
   /* Clears the floating Menu button (top:22px + ~38px tall). */
-  .hero__main{padding:86px var(--gutter) 26px}
+  /* Bottom matches .hero__stats' 44px top padding: equal space either side of the navy/sand seam. */
+  .hero__main{padding:100px var(--gutter) 44px}
   .hero__identity{margin:34px 0 0;gap:20px}
   .hero__portrait{width:120px;height:120px}
   /* One line, always: the name (with ", PhD") renders ~9.9× its font size
@@ -852,7 +853,7 @@ a.btn{border-bottom:1px solid transparent}
   .pub{grid-template-columns:84px 1fr;gap:16px;padding:26px 0}
   .pub img{width:84px;height:auto;align-self:start;object-fit:contain}
   .pub .eyebrow{font-size:10.5px}
-  .pub h3{margin-top:8px;font-size:22px;line-height:1.15}
+  .pub h3{margin-top:8px;font-size:18px;line-height:1.2}
   .pub__venue{margin-top:10px;font-size:13px;line-height:1.5}
   .pub__link{margin-top:12px}
 
@@ -860,17 +861,16 @@ a.btn{border-bottom:1px solid transparent}
      has no full-height column to fill (§13.3). */
   .contact__figure{min-height:0;height:430px}
   .contact__panel{padding:40px var(--gutter)}
-  .contact__quote{left:var(--gutter);right:var(--gutter);top:74px}
+  .contact__quote{left:var(--gutter);right:var(--gutter);top:100px}
   .contact__value{font-size:22px}
   .contact__row{padding:22px 0}
 }
 
-/* --- Mobile menu: sticky glass bar + slide-in drawer ---------------------
+/* --- Mobile menu: floating pill + slide-in drawer ------------------------
    Same markup as the desktop dropdown on every page; site.js wraps the list
-   in .menu__sheet with a close button and title. The bar's blur lives on
-   ::before, NOT on .menu itself — a backdrop-filter on .menu would make it
-   the containing block for the position:fixed drawer and scrim, trapping
-   them inside the bar.
+   in .menu__sheet with a close button and title. No backdrop-filter or
+   transform on .menu itself — either would make .menu the containing block
+   for the position:fixed drawer and scrim, trapping them inside the pill.
    ------------------------------------------------------------------------ */
 
 .menu__sheet{display:contents}
@@ -878,25 +878,19 @@ a.btn{border-bottom:1px solid transparent}
 .menu__scrim,.menu__close,.menu__head{display:none}
 
 @media (max-width:700px){
-  .menu--floating,.hero .menu--floating{position:fixed;top:0;left:0;right:0;z-index:50;
-    height:52px;display:flex;align-items:center;padding:0 var(--gutter)}
-  /* Clear glass, iOS-style. Over navy it's pure blur — no tint, no edge,
-     no saturation boost (which would shift the navy) — so blurred navy is
-     just navy and the bar vanishes; only content passing under it shows. */
-  .menu--floating::before{content:"";position:absolute;inset:0;z-index:-1;
-    background:transparent;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
-    transition:background-color var(--duration-base) var(--ease-standard)}
-  /* Over light sections (toggled by site.js) a faint white frost keeps the
-     ink label legible over text. */
-  .menu--onLight::before{background:rgba(255,255,255,.45)}
-  .menu--onLight .menu__button{color:var(--ink-900)}
+  /* The Menu pill floats at the top left over the page, fixed as it
+     scrolls — no bar or blur behind it; the pill is its own frosted glass. */
+  .menu--floating,.hero .menu--floating{position:fixed;top:14px;left:var(--gutter);right:auto;
+    z-index:50;display:block;padding:0}
 
-  .menu__button,.menu__button--onPhoto{padding:8px 0;background:none;border:0;
-    border-radius:0;-webkit-backdrop-filter:none;backdrop-filter:none;
-    transition:color var(--duration-base) var(--ease-standard)}
-  .menu__button:hover,.menu__button--onPhoto:hover{background:none}
-  .menu__bars{gap:4px}
-  .menu__bars span{width:16px;height:1.5px}
+  /* Floating glass pill — always dark frosted glass with a white label, so
+     it reads the same over navy, sand, white or photos without depending
+     on detecting what's underneath. Over navy it all but blends in. */
+  .menu__button,.menu__button--onPhoto{padding:9px 16px;border-radius:var(--radius-pill);
+    color:var(--paper-000);background:rgba(22,36,47,.62);border:1px solid rgba(255,255,255,.16);
+    -webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);
+    transition:background-color var(--duration-base) var(--ease-standard)}
+  .menu__button:hover,.menu__button--onPhoto:hover{background:rgba(22,36,47,.78)}
 
   .menu__scrim{display:block;position:fixed;inset:0;z-index:1;
     background:rgba(11,20,27,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
