@@ -218,7 +218,7 @@ a.btn{border-bottom:1px solid transparent}
 /* Centred in the free space between the title and the portrait row: auto
    margins above and below split it evenly; the symmetric padding keeps a
    26px minimum gap on each side without shifting the centre. */
-.hero__lede{margin:auto 0;padding:26px 0;max-width:29.5em;
+.hero__lede{margin:auto 0;padding:26px 0;max-width:30.5em;
   font-size:clamp(16px,calc(25px + var(--grow0)*.016),40px);
   line-height:var(--leading-normal);color:var(--ink-200)}
 
